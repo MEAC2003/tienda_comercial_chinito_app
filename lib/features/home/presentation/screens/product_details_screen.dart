@@ -180,19 +180,17 @@ class _ProductDetailsView extends StatelessWidget {
                 ),
                 Container(
                   width: double.infinity,
-                  height: 56.h, // Altura estándar para botones grandes
+                  height: 56.h,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(
-                        AppSize.defaultRadius * 2), // Radio redondeado
+                    borderRadius:
+                        BorderRadius.circular(AppSize.defaultRadius * 2),
                   ),
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors
-                          .primaryColor, // Azul similar al de la imagen
+                      backgroundColor: AppColors.primaryColor,
                       foregroundColor: Colors.white,
-                      elevation:
-                          0, // No necesitamos elevation aquí porque ya tenemos shadow
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius:
                             BorderRadius.circular(AppSize.defaultRadius * 2),
