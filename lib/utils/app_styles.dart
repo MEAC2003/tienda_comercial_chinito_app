@@ -17,6 +17,12 @@ class AppStyles {
         fontWeight: fontWeight ?? FontWeight.w400,
       );
 
+  static TextStyle h3p5({Color? color, FontWeight? fontWeight}) => TextStyle(
+        fontSize: 18.sp,
+        color: color,
+        fontWeight: fontWeight ?? FontWeight.w400,
+      );
+
   static TextStyle h4({Color? color, FontWeight? fontWeight}) => TextStyle(
         fontSize: 14.sp,
         color: color,
