@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/presentation/screens/screen.dart';
 import 'package:tienda_comercial_chinito_app/features/home/presentation/screens/screens.dart';
-// import 'package:tienda_comercial_chinito_app/onboarding.dart';
+import 'package:tienda_comercial_chinito_app/features/onboarding/onboarding.dart';
 
 class AppRouter {
   static const String home = '/';
@@ -9,10 +9,10 @@ class AppRouter {
   static const String signUp = '/sign-up';
   static const String catalog = '/catalog';
   static const String productDetails = '/product-details';
-  static const String onboardingScreen = '/onboarding-screen';
+  static const String onboarding = '/onboarding';
 
   static final router = GoRouter(
-    initialLocation: home,
+    initialLocation: onboarding,
     routes: [
       GoRoute(
         path: home,
@@ -34,10 +34,10 @@ class AppRouter {
         path: catalog,
         builder: (context, state) => const CatalogScreen(),
       ),
-      // GoRoute(
-      //   path: onboardingScreen,
-      //   builder: (context, state) => const OnboardingScreen(),
-      // ),
+      GoRoute(
+        path: onboarding,
+        builder: (context, state) => const OnboardingScreen(),
+      ),
     ],
   );
 }

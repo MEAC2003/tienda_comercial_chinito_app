@@ -11,14 +11,14 @@ class AppStyles {
         fontWeight: fontWeight ?? FontWeight.w400,
       );
 
-  static TextStyle h3({Color? color, FontWeight? fontWeight}) => TextStyle(
-        fontSize: 16.sp,
+  static TextStyle h3p5({Color? color, FontWeight? fontWeight}) => TextStyle(
+        fontSize: 18.sp,
         color: color,
         fontWeight: fontWeight ?? FontWeight.w400,
       );
 
-  static TextStyle h3p5({Color? color, FontWeight? fontWeight}) => TextStyle(
-        fontSize: 18.sp,
+  static TextStyle h3({Color? color, FontWeight? fontWeight}) => TextStyle(
+        fontSize: 16.sp,
         color: color,
         fontWeight: fontWeight ?? FontWeight.w400,
       );
