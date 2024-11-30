@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 class CustomTextField extends StatelessWidget {

@@ -7,6 +7,9 @@ import 'package:tienda_comercial_chinito_app/core/theme/app_theme.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/data/datasources/supabase_auth_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/domain/repositories/auth_repository_impl.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/data/datasources/supabase_users_data_source.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/domain/repositories/users_repository_impl.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 void main() async {
@@ -28,6 +31,16 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepository)),
         ChangeNotifierProvider.value(value: authProvider),
+        ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
+          create: (context) => UserProvider(
+            UsersRepositoryImpl(
+              SupabaseUsersDataSource(Supabase.instance.client),
+            ),
+            authProvider: Provider.of<AuthProvider>(context, listen: false),
+          ),
+          update: (context, authProvider, previousUserProvider) =>
+              previousUserProvider!..updateAuthProvider(authProvider),
+        ),
       ],
       child: const MyApp(),
     ),

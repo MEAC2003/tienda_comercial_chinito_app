@@ -34,7 +34,7 @@ class ProductGrid extends StatelessWidget {
           circleColor: product['circleColor'],
           onSelect: () {
             // Navegar a la pantalla de detalles del producto
-            GoRouter.of(context).go(
+            GoRouter.of(context).push(
               AppRouter.productDetails,
             );
           },

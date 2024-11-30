@@ -44,6 +44,7 @@ dependencies:
   supabase_flutter: ^2.8.0
   carousel_slider: ^5.0.0
   sliding_clipped_nav_bar: ^3.1.1
+  fl_chart: ^0.69.2
 
 dev_dependencies:
   flutter_test:

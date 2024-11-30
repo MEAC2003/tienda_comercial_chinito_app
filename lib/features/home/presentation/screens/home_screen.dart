@@ -218,7 +218,7 @@ class _HomeView extends StatelessWidget {
                         ),
                         TextButton(
                           onPressed: () {
-                            context.push(AppRouter.catalog);
+                            context.push(AppRouter.myAccount);
                           },
                           child: Text(
                             'Ver más',

@@ -160,7 +160,7 @@ class _SignInViewState extends State<_SignInView> {
                 if (result.success) {
                   if (authProvider
                       .hasRole(UserRole.admin.toString().split('.').last)) {
-                    context.go(AppRouter.home);
+                    context.go(AppRouter.dashboard);
                   } else {
                     context.go(AppRouter.home);
                   }

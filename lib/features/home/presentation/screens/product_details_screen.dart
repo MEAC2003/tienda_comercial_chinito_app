@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
 import 'package:tienda_comercial_chinito_app/features/home/presentation/widgets/widgets.dart';
+import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
@@ -15,15 +16,9 @@ class ProductDetailsScreen extends StatelessWidget {
         backgroundColor: const Color(0xFFFFFFFF),
         leading: IconButton(
           padding: EdgeInsets.symmetric(
-              horizontal: AppSize.defaultPaddingHorizontal * 1.5),
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            size: 24,
-            color: AppColors.darkColor,
-          ),
-          onPressed: () => GoRouter.of(context).go(
-            AppRouter.home,
-          ),
+              horizontal: AppSize.defaultPaddingHorizontal * 1.5.w),
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => context.pop(),
         ),
         centerTitle: true,
         title: Text(
@@ -178,35 +173,10 @@ class _ProductDetailsView extends StatelessWidget {
                 SizedBox(
                   height: AppSize.defaultPadding * 2,
                 ),
-                Container(
-                  width: double.infinity,
-                  height: 56.h,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(AppSize.defaultRadius * 2),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSize.defaultRadius * 2),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                          vertical: AppSize.defaultPadding),
-                    ),
-                    child: Text(
-                      'Confirmar pedido',
-                      style: AppStyles.h3(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
+                CustomActionButton(
+                  text: 'Confirmar pedido',
+                  onPressed: () {},
+                )
               ],
             ),
           )

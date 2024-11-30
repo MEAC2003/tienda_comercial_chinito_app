@@ -6,8 +6,13 @@ class AuthResult {
   final bool success;
   final bool isNewUser;
   final String? error;
+  final String? avatarUrl;
 
-  AuthResult({required this.success, required this.isNewUser, this.error});
+  AuthResult(
+      {required this.success,
+      required this.isNewUser,
+      this.error,
+      this.avatarUrl});
 }
 
 abstract class AuthDataSource {
@@ -47,12 +52,16 @@ class SupabaseAuthDataSourceImpl implements AuthDataSource {
     required String fullName,
     required String email,
     required String password,
+    String? avatarUrl,
   }) async {
     try {
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
-        data: {'full_name': fullName},
+        data: {
+          'full_name': fullName,
+          'avatar_url': avatarUrl,
+        },
       );
 
       if (response.user != null) {
@@ -60,11 +69,16 @@ class SupabaseAuthDataSourceImpl implements AuthDataSource {
         await _supabase.from('profiles').upsert({
           'id': response.user!.id,
           'full_name': fullName,
+          'avatar_url': avatarUrl,
           'updated_at': DateTime.now().toIso8601String(),
         });
       }
 
-      return AuthResult(success: response.user != null, isNewUser: true);
+      return AuthResult(
+        success: response.user != null,
+        isNewUser: true,
+        avatarUrl: avatarUrl,
+      );
     } catch (e) {
       if (e.toString().contains('429')) {
         return AuthResult(
