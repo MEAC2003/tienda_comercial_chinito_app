@@ -5,6 +5,7 @@ import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/widgets/widgets.dart';
+import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 class AdminMyAccountScreen extends StatelessWidget {
@@ -171,54 +172,45 @@ class _AdminMyAccountViewState extends State<_AdminMyAccountView> {
                     // Aquí puedes agregar navegación basada en la selección
                     switch (value) {
                       case 'usuario':
-                        context.push(AppRouter.settings);
+                        context.push(AppRouter.home);
                         break;
                       case 'admin':
-                        context.push(AppRouter.editProfile);
+                        context.push(AppRouter.dashboard);
                         break;
                     }
                   });
                 },
               ),
               SizedBox(height: AppSize.defaultPadding),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                trailing: const Icon(Icons.arrow_forward_ios),
-                title: Row(
-                  children: [
-                    const Icon(Icons.bar_chart),
-                    SizedBox(width: AppSize.defaultPaddingHorizontal * 0.2),
-                    Text(
-                      'Gráficos ',
-                      style: AppStyles.h3(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.darkColor,
-                      ),
-                    ),
-                  ],
-                ),
+              CustomListTile(
+                leadingIcon: const Icon(Icons.bar_chart),
+                title: 'Gráficos',
+                trailingIcon: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   context.push(AppRouter.editProfile);
                 },
               ),
               SizedBox(height: AppSize.defaultPadding),
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                trailing: const Icon(Icons.arrow_forward_ios),
-                title: Row(
-                  children: [
-                    //icon para los reportes
-                    const Icon(Icons.my_library_books_rounded),
-                    SizedBox(width: AppSize.defaultPaddingHorizontal * 0.2),
-                    Text(
-                      'Reportes',
-                      style: AppStyles.h3(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.darkColor,
-                      ),
-                    ),
-                  ],
-                ),
+              CustomListTile(
+                leadingIcon: const Icon(Icons.my_library_books_rounded),
+                title: 'Reportes',
+                trailingIcon: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  context.push(AppRouter.editProfile);
+                },
+              ),
+              CustomListTile(
+                leadingIcon: const Icon(Icons.attach_money),
+                title: 'Ingresos de productos',
+                trailingIcon: const Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  context.push(AppRouter.editProfile);
+                },
+              ),
+              CustomListTile(
+                leadingIcon: const Icon(Icons.money_off),
+                title: 'Egresos de productos',
+                trailingIcon: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
                   context.push(AppRouter.editProfile);
                 },

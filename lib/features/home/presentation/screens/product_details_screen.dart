@@ -175,6 +175,7 @@ class _ProductDetailsView extends StatelessWidget {
                 ),
                 CustomActionButton(
                   text: 'Confirmar pedido',
+                  color: AppColors.primaryColor,
                   onPressed: () {},
                 )
               ],

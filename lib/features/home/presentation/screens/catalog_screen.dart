@@ -188,6 +188,9 @@ class _CatalogView extends StatelessWidget {
                     height: AppSize.defaultPadding * 1.5,
                   ),
                   ProductGrid(products: products),
+                  SizedBox(
+                    height: AppSize.defaultPadding * 4,
+                  ),
                 ],
               ),
             )

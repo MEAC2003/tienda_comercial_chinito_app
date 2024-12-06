@@ -168,6 +168,7 @@ class _ConfigView extends StatelessWidget {
                 height: AppSize.defaultPadding * 0.3,
               ),
               ProductGrid(products: products),
+              SizedBox(height: AppSize.defaultPadding * 3),
             ],
           ),
         ),

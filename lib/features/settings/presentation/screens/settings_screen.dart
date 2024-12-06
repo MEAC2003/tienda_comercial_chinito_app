@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/presentation/providers/auth_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/widgets/widgets.dart';
+import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -47,43 +48,19 @@ class _SettingsView extends StatelessWidget {
             SizedBox(height: AppSize.defaultPadding * 1.5),
             const SwitchNotifications(),
             SizedBox(height: AppSize.defaultPadding),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              trailing: const Icon(Icons.arrow_forward_ios),
-              title: Row(
-                children: [
-                  const Icon(Icons.border_color),
-                  SizedBox(width: AppSize.defaultPaddingHorizontal * 0.2),
-                  Text(
-                    'Editar Perfil',
-                    style: AppStyles.h3(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.darkColor,
-                    ),
-                  ),
-                ],
-              ),
+            CustomListTile(
+              leadingIcon: const Icon(Icons.border_color),
+              title: 'Editar Perfil',
+              trailingIcon: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 context.push(AppRouter.editProfile);
               },
             ),
             SizedBox(height: AppSize.defaultPadding),
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              trailing: const Icon(Icons.arrow_forward_ios),
-              title: Row(
-                children: [
-                  const Icon(Icons.offline_share),
-                  SizedBox(width: AppSize.defaultPaddingHorizontal * 0.2),
-                  Text(
-                    'Cerrar Sesión',
-                    style: AppStyles.h3(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.darkColor,
-                    ),
-                  ),
-                ],
-              ),
+            CustomListTile(
+              leadingIcon: const Icon(Icons.offline_share),
+              title: 'Cerrar Sesión',
+              trailingIcon: const Icon(Icons.arrow_forward_ios),
               onTap: () {
                 Provider.of<AuthProvider>(context, listen: false).signOut();
                 GoRouter.of(context).go(AppRouter.signIn);

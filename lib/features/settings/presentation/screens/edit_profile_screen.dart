@@ -122,6 +122,7 @@ class _EditProfileViewState extends State<_EditProfileView> {
                 horizontal: AppSize.defaultPaddingHorizontal * 1.5),
             child: CustomActionButton(
               text: 'Guardar Cambios',
+              color: AppColors.primaryColor,
               onPressed: () {
                 final userProvider =
                     Provider.of<UserProvider>(context, listen: false);

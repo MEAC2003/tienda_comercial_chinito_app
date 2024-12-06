@@ -4,16 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
-class NavBar extends StatefulWidget {
+class AdminNavBar extends StatefulWidget {
   final Widget child;
 
-  const NavBar({super.key, required this.child});
+  const AdminNavBar({super.key, required this.child});
 
   @override
-  State<NavBar> createState() => _NavBarState();
+  State<AdminNavBar> createState() => _AdminNavBarState();
 }
 
-class _NavBarState extends State<NavBar> {
+class _AdminNavBarState extends State<AdminNavBar> {
   int _selectedIndex = 0;
 
   @override
@@ -36,13 +36,13 @@ class _NavBarState extends State<NavBar> {
                   });
                   switch (index) {
                     case 0:
-                      context.go(AppRouter.home);
+                      context.go(AppRouter.dashboard);
                       break;
                     case 1:
-                      context.go(AppRouter.catalog);
+                      context.go(AppRouter.adminActions);
                       break;
                     case 2:
-                      context.go(AppRouter.myAccount);
+                      context.go(AppRouter.adminMyAccount);
                       break;
                   }
                 },
@@ -55,8 +55,8 @@ class _NavBarState extends State<NavBar> {
                     title: 'Inicio',
                   ),
                   BarItem(
-                    icon: Icons.book,
-                    title: 'Catálogo',
+                    icon: Icons.list,
+                    title: 'Acciones',
                   ),
                   BarItem(
                     icon: Icons.person,

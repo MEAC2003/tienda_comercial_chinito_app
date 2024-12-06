@@ -240,6 +240,9 @@ class _HomeView extends StatelessWidget {
                       height: AppSize.defaultPadding,
                     ),
                     ProductGrid(products: products),
+                    SizedBox(
+                      height: AppSize.defaultPadding * 4,
+                    ),
                   ],
                 ),
               ),
