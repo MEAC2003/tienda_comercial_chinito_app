@@ -7,9 +7,13 @@ import 'package:tienda_comercial_chinito_app/core/theme/app_theme.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/data/datasources/supabase_auth_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/domain/repositories/auth_repository_impl.dart';
 import 'package:tienda_comercial_chinito_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:tienda_comercial_chinito_app/features/home/data/datasources/supabase_product_data_source.dart';
+import 'package:tienda_comercial_chinito_app/features/home/domain/repositories/product_repository_impl.dart';
+import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/datasources/supabase_users_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/domain/repositories/users_repository_impl.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
+import 'package:tienda_comercial_chinito_app/features/shared/navigation_provider.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 void main() async {
@@ -24,6 +28,8 @@ void main() async {
   final authDataSource = SupabaseAuthDataSourceImpl();
   final authRepository = AuthRepositoryImpl(authDataSource);
   final authProvider = AuthProvider(authRepository);
+  final productDataSource = SupabaseProductDataSourceImpl();
+  final productRepository = ProductRepositoryImpl(productDataSource);
   await authProvider.initializeUser();
 
   runApp(
@@ -31,6 +37,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepository)),
         ChangeNotifierProvider.value(value: authProvider),
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
         ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
           create: (context) => UserProvider(
             UsersRepositoryImpl(
@@ -40,6 +47,9 @@ void main() async {
           ),
           update: (context, authProvider, previousUserProvider) =>
               previousUserProvider!..updateAuthProvider(authProvider),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProductProvider(productRepository),
         ),
       ],
       child: const MyApp(),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
+import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/home/presentation/widgets/widgets.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
@@ -19,7 +20,12 @@ class MyAccountScreen extends StatelessWidget {
   }
 }
 
-class _ConfigView extends StatelessWidget {
+class _ConfigView extends StatefulWidget {
+  @override
+  State<_ConfigView> createState() => _ConfigViewState();
+}
+
+class _ConfigViewState extends State<_ConfigView> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -167,7 +173,49 @@ class _ConfigView extends StatelessWidget {
               SizedBox(
                 height: AppSize.defaultPadding * 0.3,
               ),
-              ProductGrid(products: products),
+              // SizedBox(
+              //   height: 0.72.sh,
+              //   child: SingleChildScrollView(child: Consumer<ProductProvider>(
+              //     builder: (context, productProvider, child) {
+              //       if (productProvider.isLoading) {
+              //         return const Center(child: CircularProgressIndicator());
+              //       }
+
+              //       // Filtra los coches disponibles
+              //       final availableProducts = productProvider.availableProducts;
+
+              //       if (availableProducts.isEmpty) {
+              //         return const Center(
+              //             child: Text('No hay coches disponibles.'));
+              //       }
+
+              //       // // Limita a mostrar solo los primeros 4 coches disponibles, o menos si hay menos de 4
+              //       // final displayCars = availableProducts.take(4).toList();
+
+              //       return Column(
+              //         children: [
+              //           ...availableProducts.map((product) => ProductCard(
+              //                 imageUrl: product.imageUrl.isEmpty
+              //                     ? product.imageUrl[0]
+              //                     : '',
+              //                 price: product.salePrice.toString(),
+              //                 title: product.name,
+              //                 //si el color
+              //                 circleColor: product.currentStock > 0
+              //                     ? Colors.green
+              //                     : Colors.red,
+              //                 onSelect: () {
+              //                   context.push(
+              //                     AppRouter.productDetails,
+              //                   );
+              //                 },
+              //               )),
+              //           SizedBox(height: AppSize.defaultPadding * 2.5)
+              //         ],
+              //       );
+              //     },
+              //   )),
+              // ),
               SizedBox(height: AppSize.defaultPadding * 3),
             ],
           ),

@@ -90,8 +90,11 @@ class AppRouter {
           builder: (context, state) => const SignUpScreen(),
         ),
         GoRoute(
-          path: productDetails,
-          builder: (context, state) => const ProductDetailsScreen(),
+          path: '$productDetails/:id',
+          builder: (context, state) {
+            final productId = state.pathParameters['id']!;
+            return ProductDetailsScreen(productId: productId);
+          },
         ),
         GoRoute(
           path: catalog,

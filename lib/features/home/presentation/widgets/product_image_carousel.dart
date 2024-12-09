@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
+// Modified ProductImageCarousel
 class ProductImageCarousel extends StatefulWidget {
+  final List<String> imageUrls;
+
   const ProductImageCarousel({
     super.key,
+    required this.imageUrls,
   });
 
   @override
@@ -15,16 +19,12 @@ class _ProductImageCarouselState extends State<ProductImageCarousel> {
   int _currentIndex = 0;
   final CarouselSliderController _controller = CarouselSliderController();
 
-  // Lista de ejemplo de imágenes - reemplazar con tus propias imágenes
-  final List<String> imageList = [
-    AppAssets.uniforme,
-    AppAssets.uniforme,
-    AppAssets.uniforme,
-    AppAssets.uniforme,
-  ];
-
   @override
   Widget build(BuildContext context) {
+    // Use default image if no images available
+    final List<String> images =
+        widget.imageUrls.isEmpty ? [AppAssets.uniforme] : widget.imageUrls;
+
     return Column(
       children: [
         CarouselSlider(
@@ -40,18 +40,31 @@ class _ProductImageCarouselState extends State<ProductImageCarousel> {
               });
             },
           ),
-          items: imageList.map((imageUrl) {
+          items: images.map((imageUrl) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
                   width: 310.w,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: Colors.white,
                   ),
-                  child: Image.asset(
-                    imageUrl,
-                    fit: BoxFit.contain,
-                  ),
+                  child: imageUrl.startsWith('http')
+                      ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(AppAssets.uniforme);
+                          },
+                        )
+                      : Image.asset(
+                          imageUrl,
+                          fit: BoxFit.contain,
+                        ),
                 );
               },
             );
@@ -60,7 +73,7 @@ class _ProductImageCarouselState extends State<ProductImageCarousel> {
         const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: imageList.asMap().entries.map((entry) {
+          children: images.asMap().entries.map((entry) {
             return Container(
               width: 8,
               height: 8,
@@ -68,7 +81,7 @@ class _ProductImageCarouselState extends State<ProductImageCarousel> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _currentIndex == entry.key
-                    ? AppColors.primaryColor // Usa tu color primario
+                    ? AppColors.primaryColor
                     : Colors.grey.withOpacity(0.5),
               ),
             );

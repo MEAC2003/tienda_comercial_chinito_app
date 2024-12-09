@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/home/presentation/widgets/widgets.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
-  const ProductDetailsScreen({super.key});
+  final String productId;
+  const ProductDetailsScreen({super.key, required this.productId});
 
   @override
   Widget build(BuildContext context) {
@@ -29,160 +32,285 @@ class ProductDetailsScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: const _ProductDetailsView(),
+      body: _ProductDetailsView(productId),
     );
   }
 }
 
 class _ProductDetailsView extends StatelessWidget {
-  const _ProductDetailsView();
+  final String productId;
+  const _ProductDetailsView(this.productId);
+  void _showConfirmationDialog(BuildContext context, Function onConfirm) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmar Pedido'),
+          content: Text('¿Está seguro que desea confirmar este pedido?'),
+          actions: [
+            TextButton(
+              child: Text('Cancelar'),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: Text('Confirmar'),
+              onPressed: () {
+                Navigator.pop(context);
+                onConfirm();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showResultDialog(BuildContext context, bool success) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(success ? 'Éxito' : 'Error'),
+          content: Text(
+            success
+                ? 'Pedido confirmado exitosamente'
+                : 'Error al confirmar el pedido',
+          ),
+          actions: [
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.pop(context);
+                if (success) {
+                  Navigator.pop(context); // Return to previous screen
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSize.defaultPadding,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const ProductImageCarousel(),
-                SizedBox(
-                  height: AppSize.defaultPadding * 1.5,
+    return Consumer2<ProductProvider, UserProvider>(
+      builder: (context, productProvider, userProvider, child) {
+        final product = productProvider.getProductById(productId);
+        final quantity = productProvider.getQuantity(productId);
+        final user = userProvider.user;
+        if (product == null) {
+          return const Center(child: Text('Producto no encontrado'));
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSize.defaultPadding,
                 ),
-                Text(
-                  'Colegio San José',
-                  style: AppStyles.h3(
-                    color: AppColors.darkColor,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                SizedBox(
-                  height: AppSize.defaultPadding / 2,
-                ),
-                Text(
-                  'Camisa manga corta',
-                  style: AppStyles.h2(
-                    color: AppColors.darkColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(
-                  height: AppSize.defaultPadding / 1.5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'S/. 50.00',
-                      style: AppStyles.h2(
-                        color: AppColors.darkColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    ProductImageCarousel(
+                      imageUrls: product.imageUrl,
+                    ),
+                    SizedBox(
+                      height: AppSize.defaultPadding * 1.5,
                     ),
                     Text(
-                      '+ 6',
-                      style: AppStyles.h3p5(
-                        color: AppColors.darkColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    )
-                  ],
-                ),
-                SizedBox(
-                  height: AppSize.defaultPadding,
-                ),
-                Text(
-                  'Categoría: TEENS',
-                  style: AppStyles.h3(
-                    color: AppColors.darkColor,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(
-                  height: AppSize.defaultPadding,
-                ),
-                SizeSelector(
-                  onSizeSelected: (String size) {
-                    print('Talla seleccionada: $size');
-                    // Aquí puedes manejar la selección de la talla
-                  },
-                ),
-                SizedBox(
-                  height: AppSize.defaultPadding,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Disponible: 2',
+                      productProvider.getSchoolNameById(product.schoolId),
                       style: AppStyles.h3(
                         color: AppColors.darkColor,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
-                    //elegir cuantos productos se quieren - 1 +
+                    SizedBox(
+                      height: AppSize.defaultPadding / 2,
+                    ),
+                    Text(
+                      product.name
+                          .split(' ')
+                          .map((word) =>
+                              word[0].toUpperCase() +
+                              word.substring(1).toLowerCase())
+                          .join(' '),
+                      style: AppStyles.h2(
+                        color: AppColors.darkColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: AppSize.defaultPadding / 1.5,
+                    ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            print('Menos producto');
-                          },
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            child: const Icon(
-                              Icons.remove,
-                              color: AppColors.darkColor,
-                            ),
+                        Text(
+                          'S/. ${product.salePrice.toStringAsFixed(2)}',
+                          style: AppStyles.h2(
+                            color: AppColors.darkColor,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: Center(
+                      ],
+                    ),
+                    SizedBox(
+                      height: AppSize.defaultPadding,
+                    ),
+                    Text(
+                      'Categoria: ${productProvider.getCategoryNameById(product.categoryId)}',
+                      style: AppStyles.h3(
+                        color: AppColors.darkColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: AppSize.defaultPadding,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Talla',
+                          style: AppStyles.h3(
+                            color: AppColors.darkColor,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            right: AppSize.defaultPadding / 1.5,
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  AppSize.defaultPaddingHorizontal * 1.7,
+                              vertical: AppSize.defaultPadding / 2.5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(
+                                  AppSize.defaultRadius * 1.5),
+                              border: Border.all(
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
                             child: Text(
-                              '1',
-                              style: TextStyle(
-                                color: AppColors.darkColor,
+                              productProvider.getSizeNameById(product.sizeId),
+                              style: AppStyles.h3(
+                                color: AppColors.primaryGrey,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            print('Más producto');
-                          },
-                          child: const SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: Icon(
-                              Icons.add,
-                              color: AppColors.darkColor,
-                            ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: AppSize.defaultPadding,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Disponible: ${product.currentStock}',
+                          style: AppStyles.h3(
+                            color: AppColors.darkColor,
+                            fontWeight: FontWeight.w600,
                           ),
+                        ),
+                        //elegir cuantos productos se quieren - 1 +
+                        Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                productProvider.decreaseQuantity(productId);
+                              },
+                              child: Container(
+                                width: 30,
+                                height: 30,
+                                child: const Icon(
+                                  Icons.remove,
+                                  color: AppColors.darkColor,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 30.w,
+                              height: 30.h,
+                              child: Center(
+                                child: Text(
+                                  '$quantity',
+                                  style: const TextStyle(
+                                    color: AppColors.darkColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                productProvider.increaseQuantity(productId);
+                              },
+                              child: SizedBox(
+                                width: 30.w,
+                                height: 30.h,
+                                child: const Icon(
+                                  Icons.add,
+                                  color: AppColors.darkColor,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: AppSize.defaultPadding * 2,
+                    ),
+                    CustomActionButton(
+                      text: 'Confirmar pedido',
+                      color: AppColors.primaryColor,
+                      onPressed: () {
+                        _showConfirmationDialog(context, () async {
+                          try {
+                            final product =
+                                productProvider.getProductById(productId);
+                            if (product == null) {
+                              _showResultDialog(context, false);
+                              return;
+                            }
+
+                            // Show loading indicator
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+
+                            final userId = user!.id;
+                            final success = await productProvider.confirmOrder(
+                                productId, userId);
+
+                            _showResultDialog(context, success);
+                          } catch (e) {
+                            print('Error en confirmación de pedido: $e');
+                            _showResultDialog(context, false);
+                          }
+                        });
+                      },
+                    )
                   ],
                 ),
-                SizedBox(
-                  height: AppSize.defaultPadding * 2,
-                ),
-                CustomActionButton(
-                  text: 'Confirmar pedido',
-                  color: AppColors.primaryColor,
-                  onPressed: () {},
-                )
-              ],
-            ),
-          )
-        ],
-      ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 }

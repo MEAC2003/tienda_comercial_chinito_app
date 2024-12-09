@@ -28,11 +28,42 @@ class ProductCard extends StatelessWidget {
           ClipRRect(
             borderRadius:
                 BorderRadius.all(Radius.circular(AppSize.defaultRadius * 1.2)),
-            child: Image.asset(
+            child: Image.network(
               imageUrl,
               height: 187.h,
               width: double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                // Fallback image if network image fails
+                return Container(
+                  height: 187.h,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: Center(
+                    child: Icon(
+                      Icons.image_not_supported,
+                      size: 50.w,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                );
+              },
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  height: 187.h,
+                  width: double.infinity,
+                  color: Colors.grey[300],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  ),
+                );
+              },
             ),
           ),
           // Contenido del producto

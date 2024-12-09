@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
 import 'package:tienda_comercial_chinito_app/features/home/presentation/widgets/widgets.dart';
 
 class ProductGrid extends StatelessWidget {
-  final List<Map<String, dynamic>> products;
+  final String imageUrl;
+  final String price;
+  final String title;
+  final Color circleColor;
+  final VoidCallback onSelect;
 
   const ProductGrid({
-    Key? key,
-    required this.products,
-  }) : super(key: key);
+    super.key,
+    required this.imageUrl,
+    required this.price,
+    required this.title,
+    required this.onSelect,
+    required this.circleColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,27 +23,20 @@ class ProductGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       padding: EdgeInsets.zero,
-      itemCount: products.length,
+      itemCount: 2,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 30,
         mainAxisSpacing: 7,
-        mainAxisExtent:
-            320, // Ajusta esta altura según el tamaño de tu ProductCard
+        mainAxisExtent: 320,
       ),
       itemBuilder: (context, index) {
-        final product = products[index];
         return ProductCard(
-          imageUrl: product['imageUrl'],
-          price: product['price'],
-          title: product['title'],
-          circleColor: product['circleColor'],
-          onSelect: () {
-            // Navegar a la pantalla de detalles del producto
-            GoRouter.of(context).push(
-              AppRouter.productDetails,
-            );
-          },
+          imageUrl: imageUrl,
+          price: price,
+          title: title,
+          circleColor: circleColor,
+          onSelect: onSelect,
         );
       },
     );

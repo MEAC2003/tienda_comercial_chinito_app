@@ -2,30 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 class FilterCategories extends StatefulWidget {
-  final List<String> categories; // Para recibir las categorías
-  final Function(String) onCategorySelected; // Para manejar la selección
+  final String initialCategory;
+  final List<String> categories;
+  final Function(String) onCategorySelected;
 
   const FilterCategories({
-    Key? key,
+    super.key,
     required this.categories,
     required this.onCategorySelected,
-  }) : super(key: key);
+    required this.initialCategory,
+  });
 
   @override
   State<FilterCategories> createState() => _FilterCategoriesState();
 }
 
 class _FilterCategoriesState extends State<FilterCategories> {
-  String selectedFilter =
-      ''; // Iniciamos vacío o puedes usar widget.categories[0]
+  late String selectedFilter;
 
   @override
   void initState() {
     super.initState();
-    // Establecemos el primer elemento como seleccionado inicialmente
-    if (widget.categories.isNotEmpty) {
-      selectedFilter = widget.categories[0];
+    selectedFilter = widget.initialCategory;
+  }
+
+  @override
+  void didUpdateWidget(covariant FilterCategories oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initialCategory != widget.initialCategory) {
+      setState(() {
+        selectedFilter = widget.initialCategory;
+      });
     }
+  }
+
+  void _selectCategory(String category) {
+    setState(() {
+      selectedFilter = category;
+    });
+    widget.onCategorySelected(category);
   }
 
   @override
@@ -38,23 +53,34 @@ class _FilterCategoriesState extends State<FilterCategories> {
             padding: const EdgeInsets.only(right: 8),
             child: FilterChip(
               selected: selectedFilter == category,
-              label: Text(category),
-              onSelected: (bool selected) {
-                setState(() {
-                  selectedFilter = category;
-                });
-                widget.onCategorySelected(category);
-              },
+              label: Text(
+                category.contains('I.E')
+                    ? category
+                    : category
+                        .split(' ')
+                        .map((word) =>
+                            word[0].toUpperCase() +
+                            word.substring(1).toLowerCase())
+                        .join(' '),
+              ),
+              onSelected: (_) => _selectCategory(category),
               backgroundColor: AppColors.primaryGrey,
               selectedColor: AppColors.primaryColor,
               labelStyle: TextStyle(
                 color: selectedFilter == category
                     ? AppColors.primaryGrey
                     : AppColors.primaryColor,
+                fontWeight: selectedFilter == category
+                    ? FontWeight.w600
+                    : FontWeight.normal,
               ),
-              shape: const StadiumBorder(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
                 side: BorderSide(
-                  color: AppColors.primaryColor,
+                  color: selectedFilter == category
+                      ? AppColors.primaryColor
+                      : AppColors.primaryColor.withOpacity(0.5),
+                  width: selectedFilter == category ? 2.0 : 1.0,
                 ),
               ),
             ),

@@ -15,7 +15,6 @@ class AuthProvider with ChangeNotifier {
   bool get isAuthenticated => _currentUser != null;
 
   bool hasRole(String role) {
-    print('Checking role: Current role is $_userRole, checking against $role');
     return _userRole == role;
   }
 
