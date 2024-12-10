@@ -21,7 +21,11 @@ class ProductDetailsScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(
               horizontal: AppSize.defaultPaddingHorizontal * 1.5.w),
           icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            Provider.of<ProductProvider>(context, listen: false)
+                .resetQuantityForProduct(productId);
+            context.pop();
+          },
         ),
         centerTitle: true,
         title: Text(
@@ -40,20 +44,52 @@ class ProductDetailsScreen extends StatelessWidget {
 class _ProductDetailsView extends StatelessWidget {
   final String productId;
   const _ProductDetailsView(this.productId);
-  void _showConfirmationDialog(BuildContext context, Function onConfirm) {
+
+  void _showStockEmptyDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirmar Pedido'),
-          content: Text('¿Está seguro que desea confirmar este pedido?'),
+          title: const Text('Producto sin Stock'),
+          content:
+              const Text('Este producto no está disponible en este momento.'),
           actions: [
             TextButton(
-              child: Text('Cancelar'),
+              child: const Text('OK'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showConfirmationDialog(
+      BuildContext context, Function onConfirm, int quantity) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmar Pedido'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('¿Está seguro que desea confirmar este pedido?'),
+              const SizedBox(height: 8),
+              Text(
+                'Cantidad: $quantity',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancelar'),
               onPressed: () => Navigator.pop(context),
             ),
             TextButton(
-              child: Text('Confirmar'),
+              child: const Text('Confirmar'),
               onPressed: () {
                 Navigator.pop(context);
                 onConfirm();
@@ -78,7 +114,7 @@ class _ProductDetailsView extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.pop(context);
                 if (success) {
@@ -272,37 +308,47 @@ class _ProductDetailsView extends StatelessWidget {
                     ),
                     CustomActionButton(
                       text: 'Confirmar pedido',
-                      color: AppColors.primaryColor,
-                      onPressed: () {
-                        _showConfirmationDialog(context, () async {
-                          try {
-                            final product =
-                                productProvider.getProductById(productId);
-                            if (product == null) {
-                              _showResultDialog(context, false);
-                              return;
+                      color: product.currentStock > 0
+                          ? AppColors.primaryColor
+                          : Colors.grey,
+                      onPressed: product.currentStock > 0
+                          ? () {
+                              final quantity =
+                                  productProvider.getQuantity(productId);
+                              if (quantity > product.currentStock) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Cantidad solicitada excede el stock disponible')),
+                                );
+                                return;
+                              }
+                              _showConfirmationDialog(context, () async {
+                                try {
+                                  // Show loading indicator
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+
+                                  final userId = user!.id;
+                                  final success = await productProvider
+                                      .confirmOrder(productId, userId);
+
+                                  // Hide loading indicator
+                                  Navigator.pop(context);
+
+                                  _showResultDialog(context, success);
+                                } catch (e) {
+                                  print('Error en confirmación de pedido: $e');
+                                  _showResultDialog(context, false);
+                                }
+                              }, quantity);
                             }
-
-                            // Show loading indicator
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            );
-
-                            final userId = user!.id;
-                            final success = await productProvider.confirmOrder(
-                                productId, userId);
-
-                            _showResultDialog(context, success);
-                          } catch (e) {
-                            print('Error en confirmación de pedido: $e');
-                            _showResultDialog(context, false);
-                          }
-                        });
-                      },
+                          : () => _showStockEmptyDialog(context),
                     )
                   ],
                 ),

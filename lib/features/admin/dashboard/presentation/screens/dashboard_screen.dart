@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/dashboard/presentation/providers/dashboard_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/dashboard/presentation/widgets/widget.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
@@ -18,17 +19,31 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-class _DashboardView extends StatelessWidget {
+class _DashboardView extends StatefulWidget {
   const _DashboardView();
+
+  @override
+  State<_DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends State<_DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+    // Load stats when screen initializes
+    Future.microtask(
+        () => context.read<DashboardProvider>().loadProductStats());
+  }
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    final dashboardProvider = context.watch<DashboardProvider>();
     final PublicUser? user = userProvider.user;
     final userName = user?.fullName ?? '';
     final firstName = userName.split(' ')[0];
     if (userProvider.isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (userProvider.error != null) {
@@ -37,7 +52,7 @@ class _DashboardView extends StatelessWidget {
 
     // If user is null, show a message
     if (user == null) {
-      return Center(child: Text('No user data available'));
+      return const Center(child: Text('No user data available'));
     }
 
     return SafeArea(
@@ -127,24 +142,24 @@ class _DashboardView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: AppSize.defaultPadding * 0.4),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  4,
-                  (index) => Container(
-                    margin: EdgeInsets.only(right: AppSize.defaultPadding / 2),
-                    width: index == 0 ? 24.w : 8.w,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color: index == 0
-                          ? AppColors.primarySkyBlue
-                          : Colors.grey.withOpacity(0.3),
-                    ),
-                  ),
-                ),
-              ),
+              // SizedBox(height: AppSize.defaultPadding * 0.4),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: List.generate(
+              //     4,
+              //     (index) => Container(
+              //       margin: EdgeInsets.only(right: AppSize.defaultPadding / 2),
+              //       width: index == 0 ? 24.w : 8.w,
+              //       height: 8,
+              //       decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.circular(4),
+              //         color: index == 0
+              //             ? AppColors.primarySkyBlue
+              //             : Colors.grey.withOpacity(0.3),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               SizedBox(height: AppSize.defaultPadding * 2),
               Row(
                 children: [
@@ -160,11 +175,13 @@ class _DashboardView extends StatelessWidget {
                 ],
               ),
               SizedBox(height: AppSize.defaultPadding),
-              const QuickStatsRow(
-                products: 10,
-                lowStock: 10,
-                mediumStock: 10,
-              ),
+              dashboardProvider.isLoading
+                  ? const CircularProgressIndicator()
+                  : QuickStatsRow(
+                      products: dashboardProvider.totalProducts,
+                      lowStock: dashboardProvider.lowStockProducts,
+                      mediumStock: dashboardProvider.mediumStockProducts,
+                    ),
               SizedBox(height: AppSize.defaultPadding * 2),
               Row(
                 children: [
@@ -186,22 +203,22 @@ class _DashboardView extends StatelessWidget {
                   QuickAction(
                     label: 'Productos',
                     icon: Icons.grid_view,
-                    onTap: () {},
+                    onTap: () => context.push(AppRouter.adminActions),
                   ),
                   QuickAction(
                     label: 'Nuevo producto',
                     icon: Icons.group_add,
-                    onTap: () => context.push(AppRouter.editProfile),
+                    onTap: () => context.push(AppRouter.adminAddProduct),
                   ),
                   QuickAction(
                     label: 'Nuevo proveedor',
                     icon: Icons.groups,
-                    onTap: () {},
+                    onTap: () => context.push(AppRouter.adminAddSupplier),
                   ),
                   QuickAction(
                     label: 'Roles',
                     icon: Icons.manage_accounts,
-                    onTap: () {},
+                    onTap: () => context.push(AppRouter.adminRoles),
                   ),
                 ],
               ),
@@ -221,7 +238,8 @@ class _DashboardView extends StatelessWidget {
                 ],
               ),
               SizedBox(height: AppSize.defaultPadding),
-              ExpensesChart()
+              const ExpensesChart(),
+              SizedBox(height: AppSize.defaultPadding * 4),
             ],
           ),
         ),

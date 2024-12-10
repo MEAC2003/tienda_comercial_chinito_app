@@ -26,14 +26,33 @@ class AppRouter {
   static const String adminMyAccount = '/admin-my-account';
   static const String adminActions = '/admin-actions';
   static const String adminAddProduct = '/admin-add-product';
+  static const String userPending = '/user-pending';
+  static const String adminRoles = '/admin-roles';
+  static const String adminAddCategory = '/admin-add-category';
+  static const String adminAddTypeGarment = '/admin-add-type-garment';
+  static const String adminAddZone = '/admin-add-zone';
+  static const String adminAddSupplier = '/admin-add-supplier';
+  static const String adminAddSchool = '/admin-add-school';
+  static const String adminAddSize = '/admin-add-size';
 
   static GoRouter getRouter(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     String initialLocation = home;
     if (authProvider.isAuthenticated &&
-        authProvider.hasRole(UserRole.admin.toString().split('.').last)) {
+        authProvider.hasRole(UserRole.admin.name)) {
       initialLocation = dashboard;
+    } else if (authProvider.isAuthenticated &&
+        authProvider.hasRole(UserRole.pending.name)) {
+      initialLocation = userPending;
+    } else if (authProvider.isAuthenticated &&
+        authProvider.hasRole(UserRole.user.name)) {
+      initialLocation = home;
+    } else if (!authProvider.isAuthenticated) {
+      initialLocation = signIn;
+    } else {
+      initialLocation = home;
     }
+
     return GoRouter(
       initialLocation: initialLocation,
       routes: [
@@ -131,6 +150,38 @@ class AppRouter {
         GoRoute(
           path: adminAddProduct,
           builder: (context, state) => const AddProductScreen(),
+        ),
+        GoRoute(
+          path: userPending,
+          builder: (context, state) => const UserPendingScreen(),
+        ),
+        GoRoute(
+          path: adminRoles,
+          builder: (context, state) => const AdminRolesScreen(),
+        ),
+        GoRoute(
+          path: adminAddCategory,
+          builder: (context, state) => const AddCategoryScreen(),
+        ),
+        GoRoute(
+          path: adminAddTypeGarment,
+          builder: (context, state) => const AdminAddTypeGarmentScreen(),
+        ),
+        GoRoute(
+          path: adminAddSchool,
+          builder: (context, state) => const AddSchoolScreen(),
+        ),
+        GoRoute(
+          path: adminAddSize,
+          builder: (context, state) => const AdminAddSizeScreen(),
+        ),
+        GoRoute(
+          path: adminAddSupplier,
+          builder: (context, state) => const AddSupplierScreen(),
+        ),
+        GoRoute(
+          path: adminAddZone,
+          builder: (context, state) => const AddZoneScreen(),
         ),
       ],
     );

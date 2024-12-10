@@ -300,6 +300,13 @@ class ProductProvider extends ChangeNotifier {
         _filteredProducts =
             _products.where((product) => product.currentStock > 0).toList();
         break;
+      case 'por agotarse':
+        _filteredProducts = _products
+            .where((product) =>
+                product.currentStock <= product.minimumStock &&
+                product.currentStock > 0)
+            .toList();
+        break;
       case 'agotado':
         _filteredProducts =
             _products.where((product) => product.currentStock <= 0).toList();
@@ -373,6 +380,11 @@ class ProductProvider extends ChangeNotifier {
       print('Error al confirmar el pedido: $e');
       return false;
     }
+  }
+
+  void resetQuantityForProduct(String productId) {
+    _productQuantities.remove(productId);
+    notifyListeners();
   }
 
 // Método para aplicar filtros múltiples
@@ -458,12 +470,15 @@ class ProductProvider extends ChangeNotifier {
           case 'disponible':
             matches &= product.currentStock > 0;
             break;
+          case 'por agotarse':
+            matches &= product.currentStock <= product.minimumStock &&
+                product.currentStock > 0;
+            break;
           case 'agotado':
             matches &= product.currentStock <= 0;
             break;
         }
       }
-
       return matches;
     }).toList();
 
@@ -472,6 +487,6 @@ class ProductProvider extends ChangeNotifier {
 
 // Método para obtener las opciones de stock
   List<String> getStockOptions() {
-    return ['Disponible', 'Agotado'];
+    return ['Disponible', 'Por agotarse', 'Agotado'];
   }
 }

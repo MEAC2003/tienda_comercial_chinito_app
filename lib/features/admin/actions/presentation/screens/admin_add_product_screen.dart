@@ -38,12 +38,20 @@ class _AdminAssProductView extends StatefulWidget {
 }
 
 class _AdminAssProductViewState extends State<_AdminAssProductView> {
-  final TextEditingController _inventarioController = TextEditingController();
+  final TextEditingController _nombreProductController =
+      TextEditingController();
+  final TextEditingController _precioController = TextEditingController();
+  final TextEditingController _stockActualController = TextEditingController();
+  final TextEditingController _stockMinimoController = TextEditingController();
+
   String? _selectedColegio;
   @override
-  void initState() {
-    super.initState();
-    _inventarioController.text = 'sv25233231'; // Valor predeterminado.
+  void dispose() {
+    _nombreProductController.dispose();
+    _precioController.dispose();
+    _stockActualController.dispose();
+    _stockMinimoController.dispose();
+    super.dispose();
   }
 
   @override
@@ -54,77 +62,56 @@ class _AdminAssProductViewState extends State<_AdminAssProductView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Nombre del Producto',
-              style: AppStyles.h4(
-                color: AppColors.primarySkyBlue,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            TextField(
-              controller: _inventarioController,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-              ),
-              style: AppStyles.h5(
-                color: AppColors.darkColor,
-                fontWeight: FontWeight.w600,
-              ),
+            CustomTextFields(
+              label: 'Nombre del Producto',
+              controller: _nombreProductController,
+              keyboardType: TextInputType.text,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese un nombre';
+                }
+                return null;
+              },
             ),
             SizedBox(height: AppSize.defaultPadding),
-            Text(
-              'Precio',
-              style: AppStyles.h4(
-                color: AppColors.primarySkyBlue,
-                fontWeight: FontWeight.w600,
-              ),
+            CustomTextFields(
+              label: 'Precio',
+              controller: _precioController,
+              keyboardType: TextInputType.text,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese el precio';
+                }
+                return null;
+              },
             ),
-            TextField(
-              controller: _inventarioController,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-              ),
-              style: AppStyles.h5(
-                color: AppColors.darkColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+
             SizedBox(height: AppSize.defaultPadding),
-            Text(
-              'Stock actual',
-              style: AppStyles.h4(
-                color: AppColors.primarySkyBlue,
-                fontWeight: FontWeight.w600,
-              ),
+            CustomTextFields(
+              label: 'Stock actual',
+              controller: _stockActualController,
+              keyboardType: TextInputType.text,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese el stock actual';
+                }
+                return null;
+              },
             ),
-            TextField(
-              controller: _inventarioController,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-              ),
-              style: AppStyles.h5(
-                color: AppColors.darkColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+
             SizedBox(height: AppSize.defaultPadding),
-            Text(
-              'Stock mínimo',
-              style: AppStyles.h4(
-                color: AppColors.primarySkyBlue,
-                fontWeight: FontWeight.w600,
-              ),
+            CustomTextFields(
+              label: 'Stock mínimo',
+              controller: _stockMinimoController,
+              keyboardType: TextInputType.text,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Por favor ingrese el stock mínimo';
+                }
+                return null;
+              },
             ),
-            TextField(
-              controller: _inventarioController,
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-              ),
-              style: AppStyles.h5(
-                color: AppColors.darkColor,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+
             SizedBox(height: AppSize.defaultPadding),
             // Campo para categoría
             Text(

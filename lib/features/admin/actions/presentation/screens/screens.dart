@@ -1,2 +1,9 @@
 export 'admin_actions_screen.dart';
-export 'admin_add_product.dart';
+export 'admin_add_product_screen.dart';
+export 'admin_roles_screen.dart';
+export 'admin_add_category_screen.dart';
+export 'admin_add_type_garment_screen.dart';
+export 'admin_add_zone_screen.dart';
+export 'admin_add_supplier_screen.dart';
+export 'admin_add_school_screen.dart';
+export 'admin_add_size_screen.dart';

@@ -157,10 +157,27 @@ class _SignInViewState extends State<_SignInView> {
               onPressed: () async {
                 final authProvider = context.read<AuthProvider>();
                 final result = await authProvider.signInWithGoogle();
+
+                //implementar esto if (authProvider.isAuthenticated &&
+                //     authProvider.hasRole(UserRole.admin.name)) {
+                //   initialLocation = dashboard;
+                // } else if (authProvider.isAuthenticated &&
+                //     authProvider.hasRole(UserRole.pending.name)) {
+                //   initialLocation = userPending;
+                // } else if (authProvider.isAuthenticated &&
+                //     authProvider.hasRole(UserRole.user.name)) {
+                //   initialLocation = home;
+                // } else {
+                //   initialLocation =
+                //       home; // Por defecto, envía a "home" si no se cumplen condiciones previas
+                // }
                 if (result.success) {
-                  if (authProvider
-                      .hasRole(UserRole.admin.toString().split('.').last)) {
+                  if (authProvider.hasRole(UserRole.admin.name)) {
                     context.go(AppRouter.dashboard);
+                  } else if (authProvider.hasRole(UserRole.pending.name)) {
+                    context.go(AppRouter.userPending);
+                  } else if (authProvider.hasRole(UserRole.user.name)) {
+                    context.go(AppRouter.home);
                   } else {
                     context.go(AppRouter.home);
                   }

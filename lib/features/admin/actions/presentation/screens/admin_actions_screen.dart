@@ -11,12 +11,6 @@ class AdminActionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          padding: EdgeInsets.symmetric(
-              horizontal: AppSize.defaultPaddingHorizontal * 1.5.w),
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => context.pop(),
-        ),
         centerTitle: true,
         title: Text(
           'Acciones',
@@ -148,7 +142,7 @@ class _AdminActionsViewState extends State<_AdminActionsView> {
                   _selectedOption = value;
                   switch (value) {
                     case 'productos':
-                      // context.push(AppRouter.home);
+                      // context.push(AppRouter.adminAddProduct);
                       break;
                     case 'proveedores':
                       break;
@@ -267,19 +261,25 @@ class _AdminActionsViewState extends State<_AdminActionsView> {
                     _selectedOption = value;
                     switch (value) {
                       case 'producto':
-                        // context.push(AppRouter.home);
+                        context.push(AppRouter.adminAddProduct);
                         break;
                       case 'proveedore':
+                        context.push(AppRouter.adminAddSupplier);
                         break;
                       case 'colegio':
+                        context.push(AppRouter.adminAddSchool);
                         break;
                       case 'zona':
+                        context.push(AppRouter.adminAddZone);
                         break;
                       case 'categoria':
+                        context.push(AppRouter.adminAddCategory);
                         break;
                       case 'tipos_prenda':
+                        context.push(AppRouter.adminAddTypeGarment);
                         break;
                       case 'talla':
+                        context.push(AppRouter.adminAddSize);
                         break;
                     }
                   },
@@ -293,7 +293,7 @@ class _AdminActionsViewState extends State<_AdminActionsView> {
               leadingIcon: const Icon(Icons.person),
               title: 'Roles de Administrador',
               onTap: () {
-                // context.push(AppRouter.adminRoles);
+                context.push(AppRouter.adminRoles);
               },
             ),
           ],
