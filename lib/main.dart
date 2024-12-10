@@ -4,8 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
 import 'package:tienda_comercial_chinito_app/core/theme/app_theme.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/data/datasources/supabase_action_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/datasources/supabase_users_data_source.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/domain/repositories/action_repository_impl.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/domain/repositories/users_repository_impl.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/presentation/providers/action_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/dashboard/data/datasources/supabase_dashboard_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/dashboard/domain/repositories/dashboard_repository_impl.dart';
@@ -40,6 +43,9 @@ void main() async {
   final adminUsersRepository = AdminUsersRepositoryImpl(
     AdminSupabaseUsersDataSource(Supabase.instance.client),
   );
+  final actionRepository = ActionRepositoryImpl(
+    SupabaseActionDataSourceImpl(),
+  );
   await authProvider.initializeUser();
 
   runApp(
@@ -71,6 +77,9 @@ void main() async {
           ),
           update: (context, authProvider, previousUserProvider) =>
               previousUserProvider!..updateAuthProvider(authProvider),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ActionProvider(actionRepository),
         ),
       ],
       child: const MyApp(),

@@ -11,15 +11,15 @@ String schoolsToJson(List<Schools> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Schools {
-  String id;
-  String createdAt;
+  String? id;
+  String? createdAt;
   String name;
   String level;
   String zoneId;
 
   Schools({
-    required this.id,
-    required this.createdAt,
+    this.id,
+    this.createdAt,
     required this.name,
     required this.level,
     required this.zoneId,
@@ -49,8 +49,6 @@ class Schools {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "created_at": createdAt,
         "name": name,
         "level": level,
         "zone_id": zoneId,

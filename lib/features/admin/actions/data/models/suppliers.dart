@@ -11,8 +11,8 @@ String sizesToJson(List<Suppliers> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Suppliers {
-  String id;
-  String createdAt;
+  String? id;
+  String? createdAt;
   String dni;
   String name;
   String description;
@@ -20,8 +20,8 @@ class Suppliers {
   String bankAccount;
 
   Suppliers({
-    required this.id,
-    required this.createdAt,
+    this.id,
+    this.createdAt,
     required this.dni,
     required this.name,
     required this.description,
@@ -59,8 +59,6 @@ class Suppliers {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "created_at": createdAt,
         "dni": dni,
         "name": name,
         "description": description,

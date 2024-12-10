@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/presentation/providers/action_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
@@ -38,10 +40,18 @@ class _AddSchoolView extends StatefulWidget {
 }
 
 class _AddSchoolViewState extends State<_AddSchoolView> {
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
   String? _selectedZone;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ActionProvider>().loadInitialData();
+    });
+  }
 
   @override
   void dispose() {
@@ -50,39 +60,57 @@ class _AddSchoolViewState extends State<_AddSchoolView> {
     super.dispose();
   }
 
+  Future<void> _saveSchool() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      final success = await context.read<ActionProvider>().createSchool(
+            name: _nameController.text,
+            description: _descriptionController.text,
+            zoneId: _selectedZone!,
+          );
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Colegio creado exitosamente')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al crear el colegio: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(AppSize.defaultPadding * 1.5),
+    final provider = context.watch<ActionProvider>();
+
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        padding: EdgeInsets.all(AppSize.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomTextFields(
               label: 'Nombre del Colegio',
               controller: _nameController,
-              keyboardType: TextInputType.text,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese un nombre';
-                }
-                return null;
-              },
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Por favor ingrese un nombre' : null,
             ),
             SizedBox(height: AppSize.defaultPadding),
             CustomTextFields(
               label: 'Nivel del Colegio',
               controller: _descriptionController,
-              keyboardType: TextInputType.text,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese una descripción';
-                }
-                return null;
-              },
+              validator: (value) =>
+                  value?.isEmpty ?? true ? 'Por favor ingrese el nivel' : null,
             ),
             SizedBox(height: AppSize.defaultPadding),
-            // Zona Dropdown
             Text(
               'Zona',
               style: AppStyles.h4(
@@ -91,6 +119,7 @@ class _AddSchoolViewState extends State<_AddSchoolView> {
               ),
             ),
             DropdownButtonFormField<String>(
+              value: _selectedZone,
               hint: Text(
                 'Selecciona la zona',
                 style: AppStyles.h5(
@@ -98,18 +127,11 @@ class _AddSchoolViewState extends State<_AddSchoolView> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              value: _selectedZone,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedZone = newValue;
-                });
-              },
-              items: ['Zona 1', 'Zona 2', 'Zona 3', 'Zona 4']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
+              items: provider.zones.map((zone) {
+                return DropdownMenuItem(
+                  value: zone.id,
                   child: Text(
-                    value,
+                    zone.name,
                     style: AppStyles.h5(
                       color: AppColors.darkColor,
                       fontWeight: FontWeight.w600,
@@ -117,18 +139,14 @@ class _AddSchoolViewState extends State<_AddSchoolView> {
                   ),
                 );
               }).toList(),
-              decoration: const InputDecoration(
-                border: UnderlineInputBorder(),
-              ),
+              onChanged: (value) => setState(() => _selectedZone = value),
+              validator: (value) =>
+                  value == null ? 'Seleccione una zona' : null,
             ),
-
             SizedBox(height: AppSize.defaultPadding * 2),
             CustomActionButton(
               text: 'Guardar Colegio',
-              onPressed: () {
-                // TODO: Implement save logic
-                print('Guardar colegio');
-              },
+              onPressed: _saveSchool,
               color: AppColors.primarySkyBlue,
             ),
           ],

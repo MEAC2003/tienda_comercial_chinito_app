@@ -11,8 +11,8 @@ String productsToJson(List<Products> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Products {
-  String id;
-  String createdAt;
+  String? id;
+  String? createdAt;
   String name;
   List<String> imageUrl;
   int salePrice;
@@ -27,8 +27,8 @@ class Products {
   bool isAvailable;
 
   Products({
-    required this.id,
-    required this.createdAt,
+    this.id,
+    this.createdAt,
     required this.name,
     required this.imageUrl,
     required this.salePrice,
@@ -94,8 +94,6 @@ class Products {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "created_at": createdAt,
         "name": name,
         "image_url": List<dynamic>.from(imageUrl.map((x) => x)),
         "sale_price": salePrice,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/presentation/providers/action_provider.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
@@ -39,6 +41,7 @@ class _AddCategoryView extends StatefulWidget {
 }
 
 class _AddCategoryViewState extends State<_AddCategoryView> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
 
   @override
@@ -47,20 +50,42 @@ class _AddCategoryViewState extends State<_AddCategoryView> {
     super.dispose();
   }
 
+  Future<void> _saveCategory() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      final success = await context.read<ActionProvider>().createCategory(
+            name: _nameController.text,
+          );
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Categoría creada exitosamente')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al crear la categoría: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+        child: Form(
+      key: _formKey,
       child: Padding(
-        padding: EdgeInsets.all(AppSize.defaultPadding * 1.5),
+        padding: EdgeInsets.all(AppSize.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomTextFields(
               label: 'Nombre de la Categoría',
               controller: _nameController,
-              keyboardType: TextInputType.text,
               validator: (value) {
-                if (value == null || value.isEmpty) {
+                if (value?.isEmpty ?? true) {
                   return 'Por favor ingrese un nombre';
                 }
                 return null;
@@ -69,15 +94,12 @@ class _AddCategoryViewState extends State<_AddCategoryView> {
             SizedBox(height: AppSize.defaultPadding * 2),
             CustomActionButton(
               text: 'Guardar Categoría',
-              onPressed: () {
-                // TODO: Implement save logic
-                print('Guardar categoría');
-              },
+              onPressed: _saveCategory,
               color: AppColors.primarySkyBlue,
             ),
           ],
         ),
       ),
-    );
+    ));
   }
 }
