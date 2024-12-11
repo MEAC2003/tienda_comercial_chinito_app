@@ -141,6 +141,11 @@ class ActionRepositoryImpl implements ActionRepository {
   }
 
   @override
+  Future<Suppliers> getSupplierById({required String id}) {
+    return _dataSource.getSupplierById(id: id);
+  }
+
+  @override
   Future<List<InventoryMovements>> getInventoryMovements() {
     return _dataSource.getInventoryMovements();
   }

@@ -11,78 +11,62 @@ import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 
 abstract class ActionDataSource {
-  //Crear un producto
+  // Métodos CRUD para Productos
   Future<void> createProduct(Products product);
-  //Actualizar un producto
   Future<void> updateProduct(Products product);
-  //Eliminar un producto
   Future<void> deleteProduct(String productId);
-  // crear una categoria
-  Future<void> createCategory(Categories category);
-  //Actualizar una categoria
-  Future<void> updateCategory(Categories category);
-  //Eliminar una categoria
-  Future<void> deleteCategory(String categoryId);
-  // crear un tipo de prenda
-  Future<void> createTypeGarment(TypeGarment typeGarment);
-  //Actualizar un tipo de prenda
-  Future<void> updateTypeGarment(TypeGarment typeGarment);
-  //Eliminar un tipo de prenda
-  Future<void> deleteTypeGarment(String typeGarmentId);
-  // crear una zona
-  Future<void> createZone(Zones zone);
-  //Actualizar una zona
-  Future<void> updateZone(Zones zone);
-  //Eliminar una zona
-  Future<void> deleteZone(String zoneId);
-  // crear un proveedor
-  Future<void> createSupplier(Suppliers supplier);
-  //Actualizar un proveedor
-  Future<void> updateSupplier(Suppliers supplier);
-  //Eliminar un proveedor
-  Future<void> deleteSupplier(String supplierId);
-  // crear una escuela
-  Future<void> createSchool(Schools school);
-  //Actualizar una escuela
-  Future<void> updateSchool(Schools school);
-  //Eliminar una escuela
-  Future<void> deleteSchool(String schoolId);
-  // crear un tamaño
-  Future<void> createSize(Sizes size);
-  //Actualizar un tamaño
-  Future<void> updateSize(Sizes size);
-  //Eliminar un tamaño
-  Future<void> deleteSize(String sizeId);
-  //crear un sexo
-  Future<void> createSex(Sex sex);
-  //Actualizar un sexo
-  Future<void> updateSex(Sex sex);
-  //Eliminar un sexo
-  Future<void> deleteSex(String sexId);
-  //Obtener todos los productos
   Future<List<Products>> getProduct();
-  //Obtener los usuarios
-  Future<List<PublicUser>> getUsers();
-  //Obtener un producto por id
   Future<Products> getProductById({required String id});
-  //obtener un usuario por id
-  Future<PublicUser> getUserById({required String id});
-  //Obtener los movimientos de inventario
-  Future<List<InventoryMovements>> getInventoryMovements();
-  //Obtener todos los proveedores
-  Future<List<Suppliers>> getSupplier();
-  //Obtener todas las categorias
+
+  // Métodos CRUD para Categorías
+  Future<void> createCategory(Categories category);
+  Future<void> updateCategory(Categories category);
+  Future<void> deleteCategory(String categoryId);
   Future<List<Categories>> getCategorie();
-  //Obtener todos los tipos de prenda
+
+  // Métodos CRUD para Tipos de Prenda
+  Future<void> createTypeGarment(TypeGarment typeGarment);
+  Future<void> updateTypeGarment(TypeGarment typeGarment);
+  Future<void> deleteTypeGarment(String typeGarmentId);
   Future<List<TypeGarment>> getTypeGarment();
-  //Obtener todas las escuelas
-  Future<List<Schools>> getSchools();
-  //Obtener todas las zonas
+
+  // Métodos CRUD para Zonas
+  Future<void> createZone(Zones zone);
+  Future<void> updateZone(Zones zone);
+  Future<void> deleteZone(String zoneId);
   Future<List<Zones>> getZone();
-  //Obtener todos los sexos
-  Future<List<Sex>> getSex();
-  //Obtener todos los tamaños
+
+  // Métodos CRUD para Proveedores
+  Future<void> createSupplier(Suppliers supplier);
+  Future<void> updateSupplier(Suppliers supplier);
+  Future<void> deleteSupplier(String supplierId);
+  Future<List<Suppliers>> getSupplier();
+  Future<Suppliers> getSupplierById({required String id});
+
+  // Métodos CRUD para Escuelas
+  Future<void> createSchool(Schools school);
+  Future<void> updateSchool(Schools school);
+  Future<void> deleteSchool(String schoolId);
+  Future<List<Schools>> getSchools();
+
+  // Métodos CRUD para Tamaños
+  Future<void> createSize(Sizes size);
+  Future<void> updateSize(Sizes size);
+  Future<void> deleteSize(String sizeId);
   Future<List<Sizes>> getSize();
+
+  // Métodos CRUD para Sexos
+  Future<void> createSex(Sex sex);
+  Future<void> updateSex(Sex sex);
+  Future<void> deleteSex(String sexId);
+  Future<List<Sex>> getSex();
+
+  // Métodos de Usuarios
+  Future<List<PublicUser>> getUsers();
+  Future<PublicUser> getUserById({required String id});
+
+  // Métodos de Movimientos de Inventario
+  Future<List<InventoryMovements>> getInventoryMovements();
 }
 
 class SupabaseActionDataSourceImpl implements ActionDataSource {
@@ -101,7 +85,19 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   @override
   Future<void> updateProduct(Products product) async {
     try {
-      await _supabase.from('products').upsert(product.toJson());
+      if (product.id == null || product.id!.isEmpty) {
+        throw Exception('Product ID cannot be null or empty');
+      }
+
+      print('Datasource: Updating product with ID: ${product.id}');
+
+      // String comparison for ID
+      await _supabase
+          .from('products')
+          .update(product.toJson())
+          .eq('id', product.id.toString()); // Ensure string comparison
+
+      print('Datasource: Product update completed for ID: ${product.id}');
     } catch (e) {
       print('Error updating product: $e');
       rethrow;
@@ -128,10 +124,15 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
     }
   }
 
-  @override
   Future<void> updateCategory(Categories category) async {
     try {
-      await _supabase.from('categories').upsert(category.toJson());
+      if (category.id == null) {
+        throw Exception('Category ID cannot be null');
+      }
+      await _supabase
+          .from('categories')
+          .update(category.toJson())
+          .eq('id', category.id.toString());
     } catch (e) {
       print('Error updating category: $e');
       rethrow;
@@ -161,7 +162,13 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   @override
   Future<void> updateTypeGarment(TypeGarment typeGarment) async {
     try {
-      await _supabase.from('type_garment').upsert(typeGarment.toJson());
+      if (typeGarment.id == null || typeGarment.id!.isEmpty) {
+        throw Exception('Type Garment ID cannot be null or empty');
+      }
+      await _supabase
+          .from('type_garment')
+          .update(typeGarment.toJson())
+          .eq('id', typeGarment.id.toString());
     } catch (e) {
       print('Error updating type garment: $e');
       rethrow;
@@ -191,7 +198,13 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   @override
   Future<void> updateZone(Zones zone) async {
     try {
-      await _supabase.from('zones').upsert(zone.toJson());
+      if (zone.id == null || zone.id!.isEmpty) {
+        throw Exception('Zone ID cannot be null or empty');
+      }
+      await _supabase
+          .from('zones')
+          .update(zone.toJson())
+          .eq('id', zone.id.toString());
     } catch (e) {
       print('Error updating zone: $e');
       rethrow;
@@ -221,7 +234,13 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   @override
   Future<void> updateSupplier(Suppliers supplier) async {
     try {
-      await _supabase.from('suppliers').upsert(supplier.toJson());
+      if (supplier.id == null || supplier.id!.isEmpty) {
+        throw Exception('Supplier ID cannot be null or empty');
+      }
+      await _supabase
+          .from('suppliers')
+          .update(supplier.toJson())
+          .eq('id', supplier.id.toString());
     } catch (e) {
       print('Error updating supplier: $e');
       rethrow;
@@ -251,7 +270,13 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   @override
   Future<void> updateSchool(Schools school) async {
     try {
-      await _supabase.from('schools').upsert(school.toJson());
+      if (school.id == null || school.id!.isEmpty) {
+        throw Exception('School ID cannot be null or empty');
+      }
+      await _supabase
+          .from('schools')
+          .update(school.toJson())
+          .eq('id', school.id.toString());
     } catch (e) {
       print('Error updating school: $e');
       rethrow;
@@ -281,7 +306,13 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   @override
   Future<void> updateSize(Sizes size) async {
     try {
-      await _supabase.from('sizes').upsert(size.toJson());
+      if (size.id == null) {
+        throw Exception('Size ID cannot be null or empty');
+      }
+      await _supabase
+          .from('sizes')
+          .update(size.toJson())
+          .eq('id', size.id.toString());
     } catch (e) {
       print('Error updating size: $e');
       rethrow;
@@ -311,7 +342,13 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   @override
   Future<void> updateSex(Sex sex) async {
     try {
-      await _supabase.from('sex').upsert(sex.toJson());
+      if (sex.id == 0) {
+        throw Exception('Sex ID cannot be zero');
+      }
+      await _supabase
+          .from('sex')
+          .update(sex.toJson())
+          .eq('id', sex.id.toString());
     } catch (e) {
       print('Error updating size: $e');
       rethrow;
@@ -468,6 +505,18 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
       return data.map((json) => Sex.fromJson(json)).toList();
     } catch (e) {
       print('Error fetching getSex: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<Suppliers> getSupplierById({required String id}) async {
+    try {
+      final response =
+          await _supabase.from('suppliers').select().eq('id', id).single();
+      return Suppliers.fromJson(response);
+    } catch (e) {
+      print('Error fetching getSupplierById: $e');
       rethrow;
     }
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
+import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
@@ -142,19 +144,27 @@ class _AdminActionsViewState extends State<_AdminActionsView> {
                   _selectedOption = value;
                   switch (value) {
                     case 'productos':
-                      // context.push(AppRouter.adminAddProduct);
+                      Provider.of<ProductProvider>(context, listen: false)
+                          .resetFilter();
+                      context.push(AppRouter.adminViewProduct);
                       break;
                     case 'proveedores':
+                      context.push(AppRouter.adminViewSupplier);
                       break;
                     case 'colegios':
+                      context.push(AppRouter.adminViewSchool);
                       break;
                     case 'zonas':
+                      context.push(AppRouter.adminViewZone);
                       break;
                     case 'categorias':
+                      context.push(AppRouter.adminViewCategory);
                       break;
                     case 'tipos_prenda':
+                      context.push(AppRouter.adminViewTypeGarment);
                       break;
                     case 'tallas':
+                      context.push(AppRouter.adminViewSize);
                       break;
                   }
                 });

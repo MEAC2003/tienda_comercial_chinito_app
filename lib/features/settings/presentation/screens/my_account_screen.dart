@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
-import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
-import 'package:tienda_comercial_chinito_app/features/home/presentation/widgets/widgets.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/widgets/widgets.dart';
@@ -43,27 +41,6 @@ class _ConfigViewState extends State<_ConfigView> {
     if (user == null) {
       return Center(child: Text('No user data available'));
     }
-
-    final List<Map<String, dynamic>> products = [
-      {
-        "imageUrl": AppAssets.uniforme,
-        "price": "29.90",
-        "title": "Uniformes para colegios",
-        "circleColor": Colors.green,
-      },
-      {
-        "imageUrl": AppAssets.uniforme,
-        "price": "49.90",
-        "title": "Uniformes para colegios",
-        "circleColor": Colors.yellow,
-      },
-      {
-        "imageUrl": AppAssets.uniforme,
-        "price": "19.90",
-        "title": "Uniformes para colegios",
-        "circleColor": Colors.red,
-      },
-    ];
 
     return SafeArea(
       child: SingleChildScrollView(

@@ -6,6 +6,8 @@ class CustomTextFields extends StatelessWidget {
   final String label;
   final TextEditingController controller;
   final TextInputType? keyboardType;
+  //hinttext
+  final String? hintText;
   final bool? obscureText;
   final String? Function(String?)? validator;
   final void Function(String?)? onSaved;
@@ -15,6 +17,7 @@ class CustomTextFields extends StatelessWidget {
     super.key,
     required this.label,
     required this.controller,
+    this.hintText,
     this.keyboardType,
     this.obscureText,
     this.validator,
@@ -41,8 +44,13 @@ class CustomTextFields extends StatelessWidget {
           validator: validator,
           onSaved: onSaved,
           onChanged: onChanged,
-          decoration: const InputDecoration(
-            border: UnderlineInputBorder(),
+          decoration: InputDecoration(
+            border: const UnderlineInputBorder(),
+            hintText: hintText,
+            hintStyle: AppStyles.h5(
+              color: AppColors.darkColor.withOpacity(0.5),
+              fontWeight: FontWeight.w600,
+            ),
           ),
           style: AppStyles.h5(
             color: AppColors.darkColor,

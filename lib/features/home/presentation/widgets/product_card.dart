@@ -8,9 +8,13 @@ class ProductCard extends StatelessWidget {
   final String title;
   final Color circleColor;
   final VoidCallback onSelect;
+  final Color? color;
+  final String? textButton;
 
   const ProductCard({
     super.key,
+    this.color,
+    this.textButton,
     required this.imageUrl,
     required this.price,
     required this.title,
@@ -120,7 +124,7 @@ class ProductCard extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: onSelect,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: color ?? AppColors.primaryColor,
                       foregroundColor: AppColors.primaryGrey,
                       shape: RoundedRectangleBorder(
                         borderRadius:
@@ -128,7 +132,7 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Seleccionar',
+                      textButton ?? 'Seleccionar',
                       style: TextStyle(
                           fontSize: 13.sp, fontWeight: FontWeight.w600),
                     ),

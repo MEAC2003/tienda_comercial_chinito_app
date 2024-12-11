@@ -96,6 +96,23 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> refreshProducts() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Get fresh data
+      final products = await _productRepository.getProduct();
+      _products = products;
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   void resetFilter() {
     _isFiltering = false;
     _filteredProducts = _products;

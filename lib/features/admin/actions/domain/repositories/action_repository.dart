@@ -58,6 +58,7 @@ abstract class ActionRepository {
   Future<void> updateSex(Sex sex);
   //Eliminar un sexo
   Future<void> deleteSex(String sexId);
+
   //Obtener todos los productos
   Future<List<Products>> getProduct();
   //Obtener todos los Usuarios publicos
@@ -70,6 +71,8 @@ abstract class ActionRepository {
   Future<List<InventoryMovements>> getInventoryMovements();
   //Obtener todos los proveedores
   Future<List<Suppliers>> getSupplier();
+  //Obtener un proveedor por id
+  Future<Suppliers> getSupplierById({required String id});
   //Obtener todas las categorias
   Future<List<Categories>> getCategorie();
   //Obtener todos los tipos de prenda

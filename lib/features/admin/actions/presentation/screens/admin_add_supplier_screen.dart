@@ -68,12 +68,12 @@ class _AddSupplierViewState extends State<_AddSupplierView> {
             phone: _phoneController.text,
             bankAccount: _bankAccountController.text,
           );
-
       if (success) {
+        await context.read<ActionProvider>().loadInitialData();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Proveedor creado exitosamente')),
         );
-        Navigator.pop(context);
+        context.pop(context);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

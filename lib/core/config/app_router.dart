@@ -37,6 +37,27 @@ class AppRouter {
   static const String adminInventoryMovements = '/admin-inventory-movements';
   static const String adminInventoryMovementsDetail =
       '/admin-inventory-movements-detail';
+  static const String adminViewProduct = '/admin-view-product';
+  static const String adminViewCategory = '/admin-view-category';
+  static const String adminViewTypeGarment = '/admin-view-type-garment';
+  static const String adminViewZone = '/admin-view-zone';
+  static const String adminViewSupplier = '/admin-view-supplier';
+  static const String adminViewSchool = '/admin-view-school';
+  static const String adminViewSize = '/admin-view-size';
+  static const String adminDetailProduct = '/admin-detail-product';
+  static const String adminProductUpdate = '/admin-product-update';
+  static const String adminDetailSupplier = '/admin-detail-supplier';
+  static const String adminSupplierUpdate = '/admin-supplier-update';
+  static const String adminDetailCategory = '/admin-detail-category';
+  static const String adminCategoryUpdate = '/admin-category-update';
+  static const String adminDetailTypeGarment = '/admin-detail-type-garment';
+  static const String adminTypeGarmentUpdate = '/admin-type-garment-update';
+  static const String adminDetailZone = '/admin-detail-zone';
+  static const String adminZoneUpdate = '/admin-zone-update';
+  static const String adminDetailSchool = '/admin-detail-school';
+  static const String adminSchoolUpdate = '/admin-school-update';
+  static const String adminDetailSize = '/admin-detail-size';
+  static const String adminSizeUpdate = '/admin-size-update';
 
   static GoRouter getRouter(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -195,6 +216,132 @@ class AppRouter {
           builder: (context, state) {
             final movementId = state.pathParameters['id']!;
             return AdminInventoryMovementsDetailScreen(movementId: movementId);
+          },
+        ),
+        GoRoute(
+          path: adminViewProduct,
+          builder: (context, state) => const AdminViewProductScreen(),
+        ),
+        GoRoute(
+          path: adminViewSupplier,
+          builder: (context, state) => const AdminViewSupplierScreen(),
+        ),
+        GoRoute(
+          path: adminViewCategory,
+          builder: (context, state) => const AdminViewCategoryScreen(),
+        ),
+        GoRoute(
+          path: adminViewTypeGarment,
+          builder: (context, state) => const AdminViewTypeGarmentScreen(),
+        ),
+        GoRoute(
+          path: adminViewSchool,
+          builder: (context, state) => const AdminViewSchoolScreen(),
+        ),
+        GoRoute(
+          path: adminViewSize,
+          builder: (context, state) => const AdminViewSizeScreen(),
+        ),
+        GoRoute(
+          path: adminViewZone,
+          builder: (context, state) => const AdminViewZoneScreen(),
+        ),
+        GoRoute(
+          path: '$adminDetailProduct/:id',
+          builder: (context, state) {
+            final productId = state.pathParameters['id']!;
+            return AdminDetailProductScreen(productId: productId);
+          },
+        ),
+        GoRoute(
+          path: '$adminProductUpdate/:id',
+          builder: (context, state) {
+            final productId = state.pathParameters['id']!;
+            return AdminProductUpdate(productId: productId);
+          },
+        ),
+        GoRoute(
+          path: '$adminDetailSupplier/:id',
+          builder: (context, state) {
+            final supplierID = state.pathParameters['id']!;
+            return AdminDetailSupplierScreen(supplierId: supplierID);
+          },
+        ),
+        GoRoute(
+          path: '$adminSupplierUpdate/:id',
+          builder: (context, state) {
+            final supplierID = state.pathParameters['id']!;
+            return AdminSupplierUpdateScreen(supplierId: supplierID);
+          },
+        ),
+        GoRoute(
+          path: '$adminDetailCategory/:id',
+          builder: (context, state) {
+            final categoryID = state.pathParameters['id']!;
+            return AdminDetailCategoryScreen(categoryId: categoryID);
+          },
+        ),
+        GoRoute(
+          path: '$adminCategoryUpdate/:id',
+          builder: (context, state) {
+            final categoryID = state.pathParameters['id']!;
+            return AdminCategoryUpdateScreen(categoryId: categoryID);
+          },
+        ),
+        GoRoute(
+          path: '$adminDetailZone/:id',
+          builder: (context, state) {
+            final zoneID = state.pathParameters['id']!;
+            return AdminDetailZoneScreen(zoneId: zoneID);
+          },
+        ),
+        GoRoute(
+          path: '$adminZoneUpdate/:id',
+          builder: (context, state) {
+            final zoneID = state.pathParameters['id']!;
+            return AdminZoneUpdateScreen(zoneId: zoneID);
+          },
+        ),
+        GoRoute(
+          path: '$adminDetailSize/:id',
+          builder: (context, state) {
+            final sizeId = state.pathParameters['id']!;
+            return AdminDetailSizeScreen(sizeId: sizeId);
+          },
+        ),
+        GoRoute(
+          path: '$adminSizeUpdate/:id',
+          builder: (context, state) {
+            final sizeId = state.pathParameters['id']!;
+            return AdminSizeUpdateScreen(sizeId: sizeId);
+          },
+        ),
+        GoRoute(
+          path: '$adminDetailSchool/:id',
+          builder: (context, state) {
+            final schoolId = state.pathParameters['id']!;
+            return AdminDetailSchoolScreen(schoolId: schoolId);
+          },
+        ),
+        GoRoute(
+          path: '$adminSchoolUpdate/:id',
+          builder: (context, state) {
+            final schoolId = state.pathParameters['id']!;
+            return AdminSchoolUpdateScreen(schoolId: schoolId);
+          },
+        ),
+        GoRoute(
+          path: '$adminDetailTypeGarment/:id',
+          builder: (context, state) {
+            final typeGarmentId = state.pathParameters['id']!;
+            return AdminDetailTypeGarmentScreen(typeGarmentId: typeGarmentId);
+          },
+        ),
+        GoRoute(
+          path: '$adminTypeGarmentUpdate/:id',
+          builder: (context, state) {
+            final typeGarmentId = state.pathParameters['id']!;
+            return AdminTypeGarmentUpdateScreen(typeGarmentId: typeGarmentId);
           },
         ),
       ],
