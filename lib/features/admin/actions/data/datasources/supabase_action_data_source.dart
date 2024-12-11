@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/categories.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/inventory_movements.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/products.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/schools.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/sex.dart';
@@ -7,6 +8,7 @@ import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/suppliers.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/type_garment.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/zones.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 
 abstract class ActionDataSource {
   //Crear un producto
@@ -59,8 +61,14 @@ abstract class ActionDataSource {
   Future<void> deleteSex(String sexId);
   //Obtener todos los productos
   Future<List<Products>> getProduct();
+  //Obtener los usuarios
+  Future<List<PublicUser>> getUsers();
   //Obtener un producto por id
-  Future<Products> getProductById({required int id});
+  Future<Products> getProductById({required String id});
+  //obtener un usuario por id
+  Future<PublicUser> getUserById({required String id});
+  //Obtener los movimientos de inventario
+  Future<List<InventoryMovements>> getInventoryMovements();
   //Obtener todos los proveedores
   Future<List<Suppliers>> getSupplier();
   //Obtener todas las categorias
@@ -333,13 +341,25 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   }
 
   @override
-  Future<Products> getProductById({required int id}) async {
+  Future<Products> getProductById({required String id}) async {
     try {
       final response =
           await _supabase.from('products').select().eq('id', id).single();
       return Products.fromJson(response);
     } catch (e) {
       print('Error fetching getProductById: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<InventoryMovements>> getInventoryMovements() async {
+    try {
+      final response = await _supabase.from('inventory_movements').select();
+      final List<dynamic> data = response as List<dynamic>;
+      return data.map((json) => InventoryMovements.fromJson(json)).toList();
+    } catch (e) {
+      print('Error fetching getInventoryMovements: $e');
       rethrow;
     }
   }
@@ -412,6 +432,30 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
       return data.map((json) => Suppliers.fromJson(json)).toList();
     } catch (e) {
       print('Error fetching getSupplier: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PublicUser> getUserById({required String id}) async {
+    try {
+      final response =
+          await _supabase.from('public_users').select().eq('id', id).single();
+      return PublicUser.fromJson(response);
+    } catch (e) {
+      print('Error fetching getUserById: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<PublicUser>> getUsers() async {
+    try {
+      final response = await _supabase.from('public_users').select();
+      final List<dynamic> data = response as List<dynamic>;
+      return data.map((json) => PublicUser.fromJson(json)).toList();
+    } catch (e) {
+      print('Error fetching getUsers: $e');
       rethrow;
     }
   }

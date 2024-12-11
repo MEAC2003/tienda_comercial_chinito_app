@@ -343,7 +343,6 @@ class _ProductDetailsView extends StatelessWidget {
 
                                   _showResultDialog(context, success);
                                 } catch (e) {
-                                  print('Error en confirmación de pedido: $e');
                                   _showResultDialog(context, false);
                                 }
                               }, quantity);

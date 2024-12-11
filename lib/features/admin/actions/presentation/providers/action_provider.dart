@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/categories.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/inventory_movements.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/products.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/schools.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/sex.dart';
@@ -8,12 +9,14 @@ import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/type_garment.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/zones.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/domain/repositories/action_repository.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 
 class ActionProvider extends ChangeNotifier {
   final ActionRepository _actionRepository;
 
   ActionProvider(this._actionRepository);
-
+  //  getUsers
+  List<PublicUser> _users = [];
   List<Categories> _categories = [];
   List<TypeGarment> _typeGarments = [];
   List<Sex> _sexes = [];
@@ -21,8 +24,15 @@ class ActionProvider extends ChangeNotifier {
   List<Schools> _schools = [];
   List<Suppliers> _suppliers = [];
   List<Zones> _zones = [];
+  List<Products> _products = [];
   bool _isLoading = false;
-
+  bool _isFiltering = false;
+  String _searchQuery = '';
+  int _resetKey = 0;
+  int get resetKey => _resetKey;
+  List<InventoryMovements> _movements = [];
+  List<InventoryMovements> _filteredMovements = [];
+  String? _error;
   // Getters
   List<Categories> get categories => _categories;
   List<TypeGarment> get typeGarments => _typeGarments;
@@ -31,8 +41,14 @@ class ActionProvider extends ChangeNotifier {
   List<Zones> get zones => _zones;
   List<Schools> get schools => _schools;
   List<Suppliers> get suppliers => _suppliers;
+  List<PublicUser> get users => _users;
+  List<Products> get products => _products;
   bool get isLoading => _isLoading;
-
+  bool get isFiltering => _isFiltering;
+  List<InventoryMovements> get movements =>
+      _searchQuery.isEmpty && !_isFiltering ? _movements : _filteredMovements;
+  bool get hasError => _error != null;
+  String? get error => _error;
   // Load all necessary data
   Future<void> loadInitialData() async {
     _isLoading = true;
@@ -46,6 +62,8 @@ class ActionProvider extends ChangeNotifier {
       _schools = await _actionRepository.getSchools();
       _suppliers = await _actionRepository.getSupplier();
       _zones = await _actionRepository.getZone();
+      _users = await _actionRepository.getUsers();
+      _products = await _actionRepository.getProduct();
     } catch (e) {
       print('Error loading initial data: $e');
     }
@@ -53,6 +71,25 @@ class ActionProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<void> loadMovements() async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      _users = await _actionRepository.getUsers();
+      _movements = await _actionRepository.getInventoryMovements();
+      _filteredMovements = _movements;
+    } catch (e) {
+      _error = 'Error al cargar los movimientos: $e';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  //obtener un usuario por id
 
   // Create new product
   Future<bool> createProduct({
@@ -184,6 +221,87 @@ class ActionProvider extends ChangeNotifier {
     } catch (e) {
       print('Error creating zone: $e');
       return false;
+    }
+  }
+
+  void searchMovements(String query) {
+    _searchQuery = query;
+    _filterMovements();
+  }
+
+  // Filter by date range
+  void filterByDateRange(DateTime startDate, DateTime endDate) {
+    _isFiltering = true;
+    _filteredMovements = _movements.where((movement) {
+      final movementDate = DateTime.parse(movement.createdAt);
+      return movementDate.isAfter(startDate) &&
+          movementDate.isBefore(endDate.add(const Duration(days: 1)));
+    }).toList();
+    notifyListeners();
+  }
+
+  Future<Products?> getProductById(String id) async {
+    try {
+      return await _actionRepository.getProductById(id: id);
+    } catch (e) {
+      print('Error getting product by id: $e');
+      return null;
+    }
+  }
+
+  // Filter by movement type
+  void filterByType(int typeId) {
+    _isFiltering = true;
+    _filteredMovements = _movements.where((movement) {
+      return movement.movementTypeId == typeId;
+    }).toList();
+    notifyListeners();
+  }
+
+  // Combined filter and search
+  void _filterMovements() {
+    _filteredMovements = _movements.where((movement) {
+      final matchesSearch = _searchQuery.isEmpty ||
+          movement.productId.toLowerCase().contains(_searchQuery.toLowerCase());
+
+      return matchesSearch;
+    }).toList();
+    notifyListeners();
+  }
+
+  // Reset all filters
+  void resetFilters() {
+    _isFiltering = false;
+    _searchQuery = '';
+    _filteredMovements = _movements;
+    _resetKey++;
+    notifyListeners();
+  }
+
+  // Format date for display
+  String formatDate(String date) {
+    final dateTime = DateTime.parse(date);
+    return '${dateTime.day}/${dateTime.month}/${dateTime.year} ${dateTime.hour}:${dateTime.minute}';
+  }
+
+  InventoryMovements? getMovementById(String id) {
+    try {
+      return _movements.firstWhere(
+        (movement) => movement.id == id,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  PublicUser? getUserById(String id) {
+    try {
+      print('id: $id');
+      print('Users: $_users');
+      return _users.firstWhere((user) => user.id == id);
+    } catch (e) {
+      print('Error getting user by id: $e');
+      return null;
     }
   }
 }

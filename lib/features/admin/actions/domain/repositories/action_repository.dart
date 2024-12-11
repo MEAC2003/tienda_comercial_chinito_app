@@ -1,4 +1,5 @@
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/categories.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/inventory_movements.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/products.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/schools.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/sex.dart';
@@ -6,6 +7,7 @@ import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/suppliers.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/type_garment.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/zones.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 
 abstract class ActionRepository {
 //Crear un producto
@@ -58,8 +60,14 @@ abstract class ActionRepository {
   Future<void> deleteSex(String sexId);
   //Obtener todos los productos
   Future<List<Products>> getProduct();
+  //Obtener todos los Usuarios publicos
+  Future<List<PublicUser>> getUsers();
   //Obtener un producto por id
-  Future<Products> getProductById({required int id});
+  Future<Products> getProductById({required String id});
+  //Obtener usuarios publicos por id
+  Future<PublicUser> getUserById({required String id});
+  //Obtener los movimientos de inventario
+  Future<List<InventoryMovements>> getInventoryMovements();
   //Obtener todos los proveedores
   Future<List<Suppliers>> getSupplier();
   //Obtener todas las categorias

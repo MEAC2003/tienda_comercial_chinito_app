@@ -34,6 +34,9 @@ class AppRouter {
   static const String adminAddSupplier = '/admin-add-supplier';
   static const String adminAddSchool = '/admin-add-school';
   static const String adminAddSize = '/admin-add-size';
+  static const String adminInventoryMovements = '/admin-inventory-movements';
+  static const String adminInventoryMovementsDetail =
+      '/admin-inventory-movements-detail';
 
   static GoRouter getRouter(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -182,6 +185,17 @@ class AppRouter {
         GoRoute(
           path: adminAddZone,
           builder: (context, state) => const AddZoneScreen(),
+        ),
+        GoRoute(
+          path: adminInventoryMovements,
+          builder: (context, state) => const AdminInventoryMovementsScreen(),
+        ),
+        GoRoute(
+          path: '$adminInventoryMovementsDetail/:id',
+          builder: (context, state) {
+            final movementId = state.pathParameters['id']!;
+            return AdminInventoryMovementsDetailScreen(movementId: movementId);
+          },
         ),
       ],
     );

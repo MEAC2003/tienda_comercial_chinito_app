@@ -98,8 +98,8 @@ class ProductProvider extends ChangeNotifier {
 
   void resetFilter() {
     _isFiltering = false;
-    _filteredProducts = _products; // Cambia esto de [] a _products
-    _isSearching = false; // Añade esto para resetear también la búsqueda
+    _filteredProducts = _products;
+    _isSearching = false;
     _resetKey++; // Incrementa para forzar reconstrucción.
     notifyListeners();
   }

@@ -199,22 +199,6 @@ class _AdminMyAccountViewState extends State<_AdminMyAccountView> {
                   context.push(AppRouter.editProfile);
                 },
               ),
-              CustomListTile(
-                leadingIcon: const Icon(Icons.attach_money),
-                title: 'Ingresos de productos',
-                trailingIcon: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  context.push(AppRouter.editProfile);
-                },
-              ),
-              CustomListTile(
-                leadingIcon: const Icon(Icons.money_off),
-                title: 'Egresos de productos',
-                trailingIcon: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  context.push(AppRouter.editProfile);
-                },
-              ),
             ],
           ),
         ),

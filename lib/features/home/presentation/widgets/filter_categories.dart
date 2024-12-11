@@ -5,12 +5,14 @@ class FilterCategories extends StatefulWidget {
   final String initialCategory;
   final List<String> categories;
   final Function(String) onCategorySelected;
+  final Color? selectedColor;
 
   const FilterCategories({
     super.key,
     required this.categories,
     required this.onCategorySelected,
     required this.initialCategory,
+    this.selectedColor,
   });
 
   @override
@@ -65,11 +67,11 @@ class _FilterCategoriesState extends State<FilterCategories> {
               ),
               onSelected: (_) => _selectCategory(category),
               backgroundColor: AppColors.primaryGrey,
-              selectedColor: AppColors.primaryColor,
+              selectedColor: widget.selectedColor ?? AppColors.primaryColor,
               labelStyle: TextStyle(
                 color: selectedFilter == category
                     ? AppColors.primaryGrey
-                    : AppColors.primaryColor,
+                    : widget.selectedColor ?? AppColors.primaryColor,
                 fontWeight: selectedFilter == category
                     ? FontWeight.w600
                     : FontWeight.normal,
@@ -78,8 +80,9 @@ class _FilterCategoriesState extends State<FilterCategories> {
                 borderRadius: BorderRadius.circular(20),
                 side: BorderSide(
                   color: selectedFilter == category
-                      ? AppColors.primaryColor
-                      : AppColors.primaryColor.withOpacity(0.5),
+                      ? widget.selectedColor ?? AppColors.primaryColor
+                      : widget.selectedColor?.withOpacity(0.5) ??
+                          AppColors.primaryColor.withOpacity(0.5),
                   width: selectedFilter == category ? 2.0 : 1.0,
                 ),
               ),

@@ -286,7 +286,16 @@ class _AdminActionsViewState extends State<_AdminActionsView> {
                 );
               },
             ),
-            //Admin Roles
+            SizedBox(height: AppSize.defaultPadding),
+            //inventario de movimientos
+            CustomListTile(
+              trailingIcon: const Icon(Icons.arrow_forward_ios),
+              leadingIcon: const Icon(Icons.inventory),
+              title: 'Inventario de Movimientos',
+              onTap: () {
+                context.push(AppRouter.adminInventoryMovements);
+              },
+            ),
             SizedBox(height: AppSize.defaultPadding),
             CustomListTile(
               trailingIcon: const Icon(Icons.arrow_forward_ios),

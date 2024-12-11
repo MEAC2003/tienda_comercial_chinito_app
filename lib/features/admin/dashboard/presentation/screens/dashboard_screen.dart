@@ -131,7 +131,6 @@ class _DashboardViewState extends State<_DashboardView> {
                     AppAssets.banner,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      print('Error loading image: $error');
                       return Container(
                         color: Colors.grey[300],
                         child: const Center(

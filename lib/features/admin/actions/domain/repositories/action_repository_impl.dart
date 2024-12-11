@@ -1,5 +1,6 @@
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/datasources/supabase_action_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/categories.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/inventory_movements.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/products.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/schools.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/sex.dart';
@@ -8,6 +9,7 @@ import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/type_garment.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/zones.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/domain/repositories/action_repository.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 
 class ActionRepositoryImpl implements ActionRepository {
   final ActionDataSource _dataSource;
@@ -124,8 +126,23 @@ class ActionRepositoryImpl implements ActionRepository {
   }
 
   @override
-  Future<Products> getProductById({required int id}) {
+  Future<Products> getProductById({required String id}) {
     return _dataSource.getProductById(id: id);
+  }
+
+  @override
+  Future<List<PublicUser>> getUsers() {
+    return _dataSource.getUsers();
+  }
+
+  @override
+  Future<PublicUser> getUserById({required String id}) {
+    return _dataSource.getUserById(id: id);
+  }
+
+  @override
+  Future<List<InventoryMovements>> getInventoryMovements() {
+    return _dataSource.getInventoryMovements();
   }
 
   @override

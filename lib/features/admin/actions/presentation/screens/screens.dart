@@ -7,3 +7,5 @@ export 'admin_add_zone_screen.dart';
 export 'admin_add_supplier_screen.dart';
 export 'admin_add_school_screen.dart';
 export 'admin_add_size_screen.dart';
+export 'admin_inventory_movements_screen.dart';
+export 'admin_inventory_movements_detail_screen.dart';
