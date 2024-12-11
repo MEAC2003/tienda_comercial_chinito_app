@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
+import 'package:tienda_comercial_chinito_app/features/onboarding/onboarding_helper.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
-  Future<void> _markOnboardingComplete(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('hasSeenOnboarding', true);
-    if (context.mounted) {
-      context.go(AppRouter.signIn);
-    }
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  @override
+  void initState() {
+    super.initState();
+    print('Onboarding Screen inicializada');
   }
 
   @override
@@ -39,7 +42,7 @@ class OnboardingScreen extends StatelessWidget {
             bottom: 0,
             right: 0,
             child: GestureDetector(
-              onTap: () => _markOnboardingComplete(context),
+              onTap: () => _completeOnboarding(context),
               child: Container(
                 height: 70.h,
                 padding: EdgeInsets.symmetric(
@@ -68,10 +71,16 @@ class OnboardingScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-// Helper function to check if onboarding is needed
-Future<bool> checkIfOnboardingNeeded() async {
-  final prefs = await SharedPreferences.getInstance();
-  return !(prefs.getBool('hasSeenOnboarding') ?? false);
+  Future<void> _completeOnboarding(BuildContext context) async {
+    print('Completando onboarding');
+
+    // Marca como completado
+    await OnboardingHelper.markOnboardingComplete();
+
+    // Navega explícitamente al login
+    context.go(AppRouter.signIn);
+
+    print('Navegando a login después de onboarding');
+  }
 }

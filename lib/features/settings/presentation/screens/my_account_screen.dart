@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
+import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
+import 'package:tienda_comercial_chinito_app/features/home/presentation/widgets/widgets.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/widgets/widgets.dart';
+import 'package:tienda_comercial_chinito_app/features/shared/navigation_provider.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
 class MyAccountScreen extends StatelessWidget {
@@ -125,7 +128,7 @@ class _ConfigViewState extends State<_ConfigView> {
                       ),
                       SizedBox(
                         width: AppSize.defaultPaddingHorizontal * 0.2,
-                      ), // Espacio entre el texto y la estrella
+                      ),
                       const Icon(
                         Icons.star,
                         color: Colors.amber,
@@ -135,6 +138,10 @@ class _ConfigViewState extends State<_ConfigView> {
                   ),
                   TextButton(
                     onPressed: () {
+                      Provider.of<NavigationProvider>(context, listen: false)
+                          .setIndex(1);
+                      Provider.of<ProductProvider>(context, listen: false)
+                          .resetFilter();
                       context.push(AppRouter.catalog);
                     },
                     child: Text(
@@ -150,49 +157,86 @@ class _ConfigViewState extends State<_ConfigView> {
               SizedBox(
                 height: AppSize.defaultPadding * 0.3,
               ),
-              // SizedBox(
-              //   height: 0.72.sh,
-              //   child: SingleChildScrollView(child: Consumer<ProductProvider>(
-              //     builder: (context, productProvider, child) {
-              //       if (productProvider.isLoading) {
-              //         return const Center(child: CircularProgressIndicator());
-              //       }
+              SizedBox(
+                child: SingleChildScrollView(
+                  child: Consumer<ProductProvider>(
+                    builder: (context, productProvider, child) {
+                      if (productProvider.isLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-              //       // Filtra los coches disponibles
-              //       final availableProducts = productProvider.availableProducts;
+                      final mostSoldProducts = productProvider.mostSoldProducts;
 
-              //       if (availableProducts.isEmpty) {
-              //         return const Center(
-              //             child: Text('No hay coches disponibles.'));
-              //       }
+                      if (mostSoldProducts.isEmpty) {
+                        return SizedBox(
+                          width: double.infinity,
+                          height: 100.h,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                productProvider.isFiltering
+                                    ? 'No hay productos más vendidos en esta categoría'
+                                    : 'No hay productos más vendidos disponibles',
+                                textAlign: TextAlign.center,
+                                style: AppStyles.h4(
+                                  color: AppColors.darkColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-              //       // // Limita a mostrar solo los primeros 4 coches disponibles, o menos si hay menos de 4
-              //       // final displayCars = availableProducts.take(4).toList();
-
-              //       return Column(
-              //         children: [
-              //           ...availableProducts.map((product) => ProductCard(
-              //                 imageUrl: product.imageUrl.isEmpty
-              //                     ? product.imageUrl[0]
-              //                     : '',
-              //                 price: product.salePrice.toString(),
-              //                 title: product.name,
-              //                 //si el color
-              //                 circleColor: product.currentStock > 0
-              //                     ? Colors.green
-              //                     : Colors.red,
-              //                 onSelect: () {
-              //                   context.push(
-              //                     AppRouter.productDetails,
-              //                   );
-              //                 },
-              //               )),
-              //           SizedBox(height: AppSize.defaultPadding * 2.5)
-              //         ],
-              //       );
-              //     },
-              //   )),
-              // ),
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 30,
+                              mainAxisSpacing: 7,
+                              mainAxisExtent: 320,
+                            ),
+                            itemCount: mostSoldProducts.length,
+                            itemBuilder: (context, index) {
+                              final producto = mostSoldProducts[index];
+                              return ProductCard(
+                                imageUrl: producto.imageUrl.isNotEmpty
+                                    ? producto.imageUrl[0]
+                                    : AppAssets.uniforme,
+                                price: producto.salePrice.toString(),
+                                title: producto.name
+                                    .split(' ')
+                                    .map((word) =>
+                                        word[0].toUpperCase() +
+                                        word.substring(1).toLowerCase())
+                                    .join(' '),
+                                circleColor: producto.currentStock >
+                                        producto.minimumStock
+                                    ? Colors.green
+                                    : producto.currentStock <=
+                                                producto.minimumStock &&
+                                            producto.currentStock >= 1
+                                        ? Colors.orange
+                                        : Colors.red,
+                                onSelect: () {
+                                  context.push(
+                                      '${AppRouter.productDetails}/${producto.id}');
+                                },
+                              );
+                            },
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
               SizedBox(height: AppSize.defaultPadding * 3),
             ],
           ),

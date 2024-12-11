@@ -17,6 +17,12 @@ class ProductRepositoryImpl implements ProductRepository {
     return await _productDataSource.getProduct();
   }
 
+  //getInventoryMovements
+  @override
+  Future<List<InventoryMovements>> getInventoryMovements() async {
+    return await _productDataSource.getInventoryMovements();
+  }
+
   @override
   Future<Products> getProductById({required int id}) async {
     return await _productDataSource.getProductById(id: id);

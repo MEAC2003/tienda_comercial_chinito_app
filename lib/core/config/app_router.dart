@@ -9,6 +9,7 @@ import 'package:tienda_comercial_chinito_app/features/auth/presentation/provider
 import 'package:tienda_comercial_chinito_app/features/auth/presentation/screens/screen.dart';
 import 'package:tienda_comercial_chinito_app/features/home/presentation/screens/screens.dart';
 import 'package:tienda_comercial_chinito_app/features/onboarding/onboarding.dart';
+import 'package:tienda_comercial_chinito_app/features/onboarding/onboarding_helper.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/screens/screens.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 
@@ -62,29 +63,30 @@ class AppRouter {
   static Future<GoRouter> getRouter(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
-    final needsOnboarding = await checkIfOnboardingNeeded();
+    final isOnboardingComplete = await OnboardingHelper.isOnboardingComplete();
 
     String initialLocation = home;
 
-    // First check if onboarding is needed
-    if (needsOnboarding) {
+    // Agrega más prints
+    if (!isOnboardingComplete) {
       initialLocation = onboarding;
-    }
-    if (authProvider.isAuthenticated &&
-        authProvider.hasRole(UserRole.admin.name)) {
-      initialLocation = dashboard;
-    } else if (authProvider.isAuthenticated &&
-        authProvider.hasRole(UserRole.pending.name)) {
-      initialLocation = userPending;
-    } else if (authProvider.isAuthenticated &&
-        authProvider.hasRole(UserRole.user.name)) {
-      initialLocation = home;
-    } else if (!authProvider.isAuthenticated) {
-      initialLocation = signIn;
     } else {
-      initialLocation = home;
+      if (authProvider.isAuthenticated &&
+          authProvider.hasRole(UserRole.admin.name)) {
+        initialLocation = dashboard;
+      } else if (authProvider.isAuthenticated &&
+          authProvider.hasRole(UserRole.pending.name)) {
+        initialLocation = userPending;
+      } else if (authProvider.isAuthenticated &&
+          authProvider.hasRole(UserRole.user.name)) {
+        initialLocation = home;
+      } else if (!authProvider.isAuthenticated) {
+        initialLocation = signIn;
+      } else {
+        initialLocation = home;
+      }
     }
-
+    print('Navegando a $initialLocation');
     return GoRouter(
       initialLocation: initialLocation,
       routes: [
@@ -225,10 +227,6 @@ class AppRouter {
             final movementId = state.pathParameters['id']!;
             return AdminInventoryMovementsDetailScreen(movementId: movementId);
           },
-        ),
-        GoRoute(
-          path: onboarding,
-          builder: (context, state) => const OnboardingScreen(),
         ),
         GoRoute(
           path: adminViewProduct,

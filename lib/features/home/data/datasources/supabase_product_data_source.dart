@@ -8,6 +8,8 @@ import 'package:tienda_comercial_chinito_app/features/home/data/models/sizes.dar
 import 'package:tienda_comercial_chinito_app/features/home/data/models/type_garment.dart';
 
 abstract class ProductDataSource {
+  //getInventoryMovements
+  Future<List<InventoryMovements>> getInventoryMovements();
   Future<List<Products>> getProduct();
   Future<Products> getProductById({required int id});
   Future<List<Categories>> getCategorie();
@@ -43,6 +45,19 @@ class SupabaseProductDataSourceImpl implements ProductDataSource {
       return Products.fromJson(response);
     } catch (e) {
       print('Error fetching getProductById: $e');
+      rethrow;
+    }
+  }
+
+  //getInventoryMovements
+  @override
+  Future<List<InventoryMovements>> getInventoryMovements() async {
+    try {
+      final response = await _supabase.from('inventory_movements').select();
+      final List<dynamic> data = response as List<dynamic>;
+      return data.map((json) => InventoryMovements.fromJson(json)).toList();
+    } catch (e) {
+      print('Error fetching getInventoryMovements: $e');
       rethrow;
     }
   }

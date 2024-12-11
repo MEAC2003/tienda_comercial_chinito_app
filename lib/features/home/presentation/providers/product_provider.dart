@@ -64,6 +64,8 @@ class ProductProvider extends ChangeNotifier {
     return _filteredProducts;
   }
 
+  List<Products> _mostSoldProducts = [];
+  List<Products> get mostSoldProducts => _mostSoldProducts;
   bool get isLoading => _isLoading;
   bool get isFiltering => _isFiltering;
   bool get isSearching => _isSearching;
@@ -117,7 +119,7 @@ class ProductProvider extends ChangeNotifier {
     _isFiltering = false;
     _filteredProducts = _products;
     _isSearching = false;
-    _resetKey++; // Incrementa para forzar reconstrucción.
+    _resetKey++;
     notifyListeners();
   }
 
@@ -136,6 +138,68 @@ class ProductProvider extends ChangeNotifier {
           orElse: () => Categories(id: -1, name: 'Unknown', createdAt: ''),
         )
         .name;
+  }
+
+  Future<void> loadMostSoldProducts() async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Get all inventory movements
+      final movements = await _productRepository.getInventoryMovements();
+
+      // Filter only sales (movementTypeId = 2 for sales)
+      final salesMovements = movements.where((m) => m.movementTypeId == 2);
+
+      // Count total quantity sold per product
+      final Map<String, int> productSales = {};
+      for (var movement in salesMovements) {
+        productSales[movement.productId] =
+            (productSales[movement.productId] ?? 0) + movement.quantity;
+      }
+
+      // Sort products by sales quantity
+      final sortedProductIds = productSales.entries.toList()
+        ..sort((a, b) => b.value.compareTo(a.value));
+
+      // Get top N products (e.g., top 10)
+      const int topN = 10;
+      _mostSoldProducts = [];
+
+      // Use filtered products if filtering is active, otherwise use all products
+      final sourceProducts = _isFiltering ? _filteredProducts : _products;
+
+      for (var i = 0; i < topN && i < sortedProductIds.length; i++) {
+        final productId = sortedProductIds[i].key;
+        final product = sourceProducts.firstWhere(
+          (p) => p.id == productId,
+          orElse: () => Products(
+            id: '-1',
+            name: 'Unknown',
+            createdAt: '',
+            typeGarmentId: '',
+            schoolId: '',
+            sexId: -1,
+            sizeId: -1,
+            categoryId: -1,
+            currentStock: 0,
+            minimumStock: 0,
+            salePrice: 0,
+            isAvailable: false,
+            imageUrl: [],
+            supplierId: '',
+          ),
+        );
+        _mostSoldProducts.add(product);
+      }
+
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      print('Error loading most sold products: $e');
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   void filterByTypeGarment(String typeGarmentName) {

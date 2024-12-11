@@ -109,7 +109,6 @@ class MyApp extends StatelessWidget {
               ),
             );
           }
-
           return MaterialApp.router(
             routerConfig: snapshot.data,
             debugShowCheckedModeBanner: false,

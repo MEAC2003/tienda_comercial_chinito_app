@@ -30,9 +30,11 @@ class _HomeViewState extends State<_HomeView> {
   @override
   void initState() {
     super.initState();
-    // Reset filter when screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ProductProvider>(context, listen: false).resetFilter();
+      final productProvider =
+          Provider.of<ProductProvider>(context, listen: false);
+      productProvider.resetFilter();
+      productProvider.loadMostSoldProducts(); // Load most sold products
     });
   }
 
@@ -42,10 +44,6 @@ class _HomeViewState extends State<_HomeView> {
     final userName = authProvider.currentUser?.userMetadata?['full_name'] ?? '';
     final firstName = userName.split(' ')[0];
     final isSignedIn = authProvider.isAuthenticated;
-    final productProvider = Provider.of<ProductProvider>(context);
-    final List<String> myCategories = productProvider.isLoading
-        ? ['Todo']
-        : ['Todo', ...productProvider.typeGarmentName];
     return SafeArea(
       child: SingleChildScrollView(
         child: Column(
@@ -171,94 +169,90 @@ class _HomeViewState extends State<_HomeView> {
                       ),
                     ],
                   ),
-                  FilterCategories(
-                    categories: myCategories,
-                    initialCategory: 'Todo',
-                    onCategorySelected: (selectedCategory) {
-                      productProvider.filterByTypeGarment(selectedCategory);
-                    },
-                  ),
                   SizedBox(
                     height: AppSize.defaultPadding,
                   ),
                   SizedBox(
-                    child:
-                        SingleChildScrollView(child: Consumer<ProductProvider>(
-                      builder: (context, productProvider, child) {
-                        if (productProvider.isLoading) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
+                    child: SingleChildScrollView(
+                      child: Consumer<ProductProvider>(
+                        builder: (context, productProvider, child) {
+                          if (productProvider.isLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
 
-                        final products = productProvider.filteredProducts;
+                          final mostSoldProducts =
+                              productProvider.mostSoldProducts;
 
-                        // Show empty message only when filtering and no results
-                        if (productProvider.isFiltering && products.isEmpty) {
-                          return SizedBox(
-                            width: double.infinity,
-                            height: 100.h, // Adjust height as needed
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'No hay productos disponibles en esta categoría',
-                                  textAlign: TextAlign.center,
-                                  style: AppStyles.h4(
-                                    color: AppColors.darkColor,
-                                    fontWeight: FontWeight.w500,
+                          if (mostSoldProducts.isEmpty) {
+                            return SizedBox(
+                              width: double.infinity,
+                              height: 100.h,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    productProvider.isFiltering
+                                        ? 'No hay productos más vendidos en esta categoría'
+                                        : 'No hay productos más vendidos disponibles',
+                                    textAlign: TextAlign.center,
+                                    style: AppStyles.h4(
+                                      color: AppColors.darkColor,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        return Column(
-                          children: [
-                            GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 30,
-                                mainAxisSpacing: 7,
-                                mainAxisExtent: 320,
+                                ],
                               ),
-                              itemCount: products.length,
-                              itemBuilder: (context, index) {
-                                final producto = products[index];
-                                return ProductCard(
-                                  imageUrl: producto.imageUrl.isNotEmpty
-                                      ? producto.imageUrl[0]
-                                      : AppAssets.uniforme,
-                                  price: producto.salePrice.toString(),
-                                  title: producto.name
-                                      .split(' ')
-                                      .map((word) =>
-                                          word[0].toUpperCase() +
-                                          word.substring(1).toLowerCase())
-                                      .join(' '),
-                                  circleColor: producto.currentStock >
-                                          producto.minimumStock
-                                      ? Colors.green
-                                      : producto.currentStock <=
-                                                  producto.minimumStock &&
-                                              producto.currentStock >= 1
-                                          ? Colors.orange
-                                          : Colors.red,
-                                  onSelect: () {
-                                    context.push(
-                                        '${AppRouter.productDetails}/${producto.id}');
-                                  },
-                                );
-                              },
-                            )
-                          ],
-                        );
-                      },
-                    )),
+                            );
+                          }
+
+                          return Column(
+                            children: [
+                              GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 30,
+                                  mainAxisSpacing: 7,
+                                  mainAxisExtent: 320,
+                                ),
+                                itemCount: mostSoldProducts.length,
+                                itemBuilder: (context, index) {
+                                  final producto = mostSoldProducts[index];
+                                  return ProductCard(
+                                    imageUrl: producto.imageUrl.isNotEmpty
+                                        ? producto.imageUrl[0]
+                                        : AppAssets.uniforme,
+                                    price: producto.salePrice.toString(),
+                                    title: producto.name
+                                        .split(' ')
+                                        .map((word) =>
+                                            word[0].toUpperCase() +
+                                            word.substring(1).toLowerCase())
+                                        .join(' '),
+                                    circleColor: producto.currentStock >
+                                            producto.minimumStock
+                                        ? Colors.green
+                                        : producto.currentStock <=
+                                                    producto.minimumStock &&
+                                                producto.currentStock >= 1
+                                            ? Colors.orange
+                                            : Colors.red,
+                                    onSelect: () {
+                                      context.push(
+                                          '${AppRouter.productDetails}/${producto.id}');
+                                    },
+                                  );
+                                },
+                              )
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: AppSize.defaultPadding * 4,

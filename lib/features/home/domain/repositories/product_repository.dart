@@ -16,4 +16,6 @@ abstract class ProductRepository {
   Future<List<Sizes>> getSize();
   Future<void> createInventoryMovement(InventoryMovements movement);
   Future<void> updateProductStock(String productId, int newStock);
+  //get getInventoryMovements
+  Future<List<InventoryMovements>> getInventoryMovements();
 }
