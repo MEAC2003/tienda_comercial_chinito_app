@@ -50,7 +50,6 @@ class _DashboardViewState extends State<_DashboardView> {
       return Center(child: Text('Error: ${userProvider.error}'));
     }
 
-    // If user is null, show a message
     if (user == null) {
       return const Center(child: Text('No user data available'));
     }
@@ -111,7 +110,7 @@ class _DashboardViewState extends State<_DashboardView> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => context.push(AppRouter.adminMyAccount),
+                    onPressed: () => (),
                     icon: const Icon(
                       Icons.notifications_none,
                     ),
@@ -124,7 +123,6 @@ class _DashboardViewState extends State<_DashboardView> {
                 height: 146.h,
                 margin: EdgeInsets.symmetric(vertical: AppSize.defaultPadding),
                 child: ClipRRect(
-                  // Para mantener los bordes redondeados
                   borderRadius:
                       BorderRadius.circular(AppSize.defaultRadius * 1.5),
                   child: Image.asset(
@@ -141,24 +139,6 @@ class _DashboardViewState extends State<_DashboardView> {
                   ),
                 ),
               ),
-              // SizedBox(height: AppSize.defaultPadding * 0.4),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: List.generate(
-              //     4,
-              //     (index) => Container(
-              //       margin: EdgeInsets.only(right: AppSize.defaultPadding / 2),
-              //       width: index == 0 ? 24.w : 8.w,
-              //       height: 8,
-              //       decoration: BoxDecoration(
-              //         borderRadius: BorderRadius.circular(4),
-              //         color: index == 0
-              //             ? AppColors.primarySkyBlue
-              //             : Colors.grey.withOpacity(0.3),
-              //       ),
-              //     ),
-              //   ),
-              // ),
               SizedBox(height: AppSize.defaultPadding * 2),
               Row(
                 children: [
@@ -202,7 +182,7 @@ class _DashboardViewState extends State<_DashboardView> {
                   QuickAction(
                     label: 'Productos',
                     icon: Icons.grid_view,
-                    onTap: () => context.push(AppRouter.adminActions),
+                    onTap: () => context.push(AppRouter.adminViewProduct),
                   ),
                   QuickAction(
                     label: 'Nuevo producto',
@@ -221,7 +201,6 @@ class _DashboardViewState extends State<_DashboardView> {
                   ),
                 ],
               ),
-              //Egresos mensual
               SizedBox(height: AppSize.defaultPadding * 2),
               Row(
                 children: [

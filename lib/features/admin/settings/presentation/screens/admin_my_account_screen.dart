@@ -5,6 +5,7 @@ import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/widgets/widgets.dart';
+import 'package:tienda_comercial_chinito_app/features/shared/navigation_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 
@@ -115,20 +116,13 @@ class _AdminMyAccountViewState extends State<_AdminMyAccountView> {
               ),
               SizedBox(height: AppSize.defaultPadding * 1.25),
               DropdownButton<String>(
-                // Hace que ocupe todo el ancho
                 isExpanded: true,
-
-                // Elimina la línea inferior (underline)
                 underline: Container(),
-
                 value: _selectedSection,
-
-                // Personaliza el estilo para que parezca más como un botón o una sección completa
                 style: AppStyles.h3(
                   fontWeight: FontWeight.w600,
                   color: AppColors.darkColor,
                 ),
-
                 hint: Row(
                   children: [
                     const Icon(Icons.bar_chart),
@@ -142,7 +136,6 @@ class _AdminMyAccountViewState extends State<_AdminMyAccountView> {
                     ),
                   ],
                 ),
-
                 items: const [
                   DropdownMenuItem(
                     value: 'usuario',
@@ -165,16 +158,18 @@ class _AdminMyAccountViewState extends State<_AdminMyAccountView> {
                     ),
                   ),
                 ],
-
                 onChanged: (value) {
                   setState(() {
                     _selectedSection = value;
-                    // Aquí puedes agregar navegación basada en la selección
                     switch (value) {
                       case 'usuario':
+                        Provider.of<NavigationProvider>(context, listen: false)
+                            .setIndex(0);
                         context.push(AppRouter.home);
                         break;
                       case 'admin':
+                        Provider.of<NavigationProvider>(context, listen: false)
+                            .setIndex(0);
                         context.push(AppRouter.dashboard);
                         break;
                     }
