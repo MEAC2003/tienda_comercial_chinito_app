@@ -15,7 +15,7 @@ class Products {
   String createdAt;
   String name;
   List<String> imageUrl;
-  int salePrice;
+  double salePrice;
   int currentStock;
   int minimumStock;
   String typeGarmentId;
@@ -48,7 +48,7 @@ class Products {
     String? createdAt,
     String? name,
     List<String>? imageUrl,
-    int? salePrice,
+    double? salePrice,
     int? currentStock,
     int? minimumStock,
     String? typeGarmentId,
@@ -81,7 +81,7 @@ class Products {
         createdAt: json["created_at"],
         name: json["name"],
         imageUrl: List<String>.from(json["image_url"].map((x) => x)),
-        salePrice: json["sale_price"],
+        salePrice: (json['sale_price'] as num).toDouble(),
         currentStock: json["current_stock"],
         minimumStock: json["minimum_stock"],
         typeGarmentId: json["type_garment_id"],

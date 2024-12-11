@@ -194,11 +194,10 @@ class ActionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Create new product
   Future<bool> createProduct({
     required String name,
     required List<String> imageUrls,
-    required int salePrice,
+    required double salePrice,
     required int currentStock,
     required int minimumStock,
     required String typeGarmentId,
@@ -207,10 +206,14 @@ class ActionProvider extends ChangeNotifier {
     required int sizeId,
     required int categoryId,
     required int sexId,
+    required String userId,
   }) async {
     try {
+      _isLoading = true;
+      notifyListeners();
+
+      // Crear el producto
       final product = Products(
-        // id and createdAt are handled by database
         name: name,
         imageUrl: imageUrls,
         salePrice: salePrice,
@@ -225,10 +228,36 @@ class ActionProvider extends ChangeNotifier {
         isAvailable: true,
       );
 
-      await _actionRepository.createProduct(product);
+      // Guardar el producto y obtener su ID
+      final String? productId = await _actionRepository.createProduct(product);
+
+      if (productId == null) {
+        throw Exception('Failed to get product ID after creation');
+      }
+
+      // Crear el movimiento de inventario con el ID obtenido
+      final movement = InventoryMovements(
+        createdAt: DateTime.now().toIso8601String(),
+        productId: productId,
+        movementTypeId: 1, // Ingreso
+        quantity: currentStock,
+        userId: userId,
+      );
+
+      await _actionRepository.createInventoryMovement(movement);
+
+      // Actualizar el estado local con el ID
+      product.id = productId;
+      _products.add(product);
+      _movements.add(movement);
+
+      _isLoading = false;
+      notifyListeners();
       return true;
     } catch (e) {
-      print('Error creating product: $e');
+      print('Error in createProduct: $e');
+      _isLoading = false;
+      notifyListeners();
       return false;
     }
   }
@@ -464,7 +493,7 @@ class ActionProvider extends ChangeNotifier {
     required String id,
     required String name,
     required List<String> imageUrls,
-    required int salePrice,
+    required double salePrice,
     required int currentStock,
     required int minimumStock,
     required String typeGarmentId,

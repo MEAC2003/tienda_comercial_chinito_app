@@ -460,7 +460,7 @@ class _AdminProductUpdateState extends State<AdminProductUpdate> {
             id: widget.productId,
             name: _nombreProductController.text,
             imageUrls: [_imageUrl ?? _product!.imageUrl.first],
-            salePrice: int.parse(_precioController.text),
+            salePrice: double.parse(_precioController.text),
             currentStock: int.parse(_stockActualController.text),
             minimumStock: int.parse(_stockMinimoController.text),
             typeGarmentId: _selectedTypeGarment!,

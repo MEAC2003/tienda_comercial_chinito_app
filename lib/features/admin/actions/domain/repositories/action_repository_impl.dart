@@ -146,6 +146,11 @@ class ActionRepositoryImpl implements ActionRepository {
   }
 
   @override
+  Future<void> createInventoryMovement(InventoryMovements movement) {
+    return _dataSource.createInventoryMovement(movement);
+  }
+
+  @override
   Future<List<InventoryMovements>> getInventoryMovements() {
     return _dataSource.getInventoryMovements();
   }
@@ -186,7 +191,7 @@ class ActionRepositoryImpl implements ActionRepository {
   }
 
   @override
-  Future<void> createProduct(Products product) {
+  Future<String?> createProduct(Products product) {
     return _dataSource.createProduct(product);
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tienda_comercial_chinito_app/core/config/app_router.dart';
@@ -96,10 +97,25 @@ class MyApp extends StatelessWidget {
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (context, child) => MaterialApp.router(
-        routerConfig: AppRouter.getRouter(context),
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
+      builder: (context, child) => FutureBuilder<GoRouter>(
+        future: AppRouter.getRouter(context),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          }
+
+          return MaterialApp.router(
+            routerConfig: snapshot.data,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+          );
+        },
       ),
     );
   }

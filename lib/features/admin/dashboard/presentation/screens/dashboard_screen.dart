@@ -110,7 +110,7 @@ class _DashboardViewState extends State<_DashboardView> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => (),
+                    onPressed: () => (context.go(AppRouter.onboarding)),
                     icon: const Icon(
                       Icons.notifications_none,
                     ),

@@ -12,12 +12,13 @@ import 'package:tienda_comercial_chinito_app/features/settings/data/models/publi
 
 abstract class ActionDataSource {
   // Métodos CRUD para Productos
-  Future<void> createProduct(Products product);
+  Future<String?> createProduct(Products product);
   Future<void> updateProduct(Products product);
   Future<void> deleteProduct(String productId);
   Future<List<Products>> getProduct();
   Future<Products> getProductById({required String id});
 
+  Future<void> createInventoryMovement(InventoryMovements movement);
   // Métodos CRUD para Categorías
   Future<void> createCategory(Categories category);
   Future<void> updateCategory(Categories category);
@@ -73,12 +74,17 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
   final _supabase = Supabase.instance.client;
 
   @override
-  Future<void> createProduct(Products product) async {
+  Future<String?> createProduct(Products product) async {
     try {
-      await _supabase.from('products').upsert(product.toJson());
+      final response = await _supabase
+          .from('products')
+          .insert(product.toJson())
+          .select()
+          .single();
+      return response['id'] as String;
     } catch (e) {
       print('Error creating product: $e');
-      rethrow;
+      return null;
     }
   }
 
@@ -263,6 +269,16 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
       await _supabase.from('schools').upsert(school.toJson());
     } catch (e) {
       print('Error creating school: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> createInventoryMovement(InventoryMovements movement) async {
+    try {
+      await _supabase.from('inventory_movements').insert(movement.toJson());
+    } catch (e) {
+      print('Error creando movimiento de inventario: $e');
       rethrow;
     }
   }

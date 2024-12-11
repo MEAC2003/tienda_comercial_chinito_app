@@ -11,7 +11,7 @@ import 'package:tienda_comercial_chinito_app/features/settings/data/models/publi
 
 abstract class ActionRepository {
 //Crear un producto
-  Future<void> createProduct(Products product);
+  Future<String?> createProduct(Products product);
   //Actualizar un producto
   Future<void> updateProduct(Products product);
   //Eliminar un producto
@@ -30,6 +30,7 @@ abstract class ActionRepository {
   Future<void> deleteTypeGarment(String typeGarmentId);
   // crear una zona
   Future<void> createZone(Zones zone);
+  Future<void> createInventoryMovement(InventoryMovements movement);
   //Actualizar una zona
   Future<void> updateZone(Zones zone);
   //Eliminar una zona

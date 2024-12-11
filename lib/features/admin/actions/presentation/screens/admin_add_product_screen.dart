@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/presentation/providers/action_provider.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 import 'package:tienda_comercial_chinito_app/services/cloudinary_service.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
@@ -107,12 +108,12 @@ class _AdminAssProductViewState extends State<_AdminAssProductView> {
               CustomTextFields(
                 label: 'Precio',
                 controller: _precioController,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
                     return 'Por favor ingrese el precio';
                   }
-                  if (int.tryParse(value!) == null) {
+                  if (double.tryParse(value!) == null) {
                     return 'Ingrese un número válido';
                   }
                   return null;
@@ -402,10 +403,17 @@ class _AdminAssProductViewState extends State<_AdminAssProductView> {
     }
 
     try {
+      final userId = context.read<UserProvider>().user?.id;
+      if (userId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error: Usuario no identificado')),
+        );
+        return;
+      }
       final success = await context.read<ActionProvider>().createProduct(
             name: _nombreProductController.text,
             imageUrls: [_imageUrl!],
-            salePrice: int.parse(_precioController.text),
+            salePrice: double.parse(_precioController.text),
             currentStock: int.parse(_stockActualController.text),
             minimumStock: int.parse(_stockMinimoController.text),
             typeGarmentId: _selectedTypeGarment!,
@@ -414,13 +422,15 @@ class _AdminAssProductViewState extends State<_AdminAssProductView> {
             sizeId: int.parse(_selectedSize!),
             categoryId: int.parse(_selectedCategory!),
             sexId: int.parse(_selectedSex!),
+            userId: userId,
           );
 
       if (success) {
+        await context.read<ActionProvider>().loadInitialData();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Producto creado exitosamente')),
         );
-        Navigator.pop(context);
+        context.pop(context);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

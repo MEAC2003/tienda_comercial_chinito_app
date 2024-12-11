@@ -59,9 +59,17 @@ class AppRouter {
   static const String adminDetailSize = '/admin-detail-size';
   static const String adminSizeUpdate = '/admin-size-update';
 
-  static GoRouter getRouter(BuildContext context) {
+  static Future<GoRouter> getRouter(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+    final needsOnboarding = await checkIfOnboardingNeeded();
+
     String initialLocation = home;
+
+    // First check if onboarding is needed
+    if (needsOnboarding) {
+      initialLocation = onboarding;
+    }
     if (authProvider.isAuthenticated &&
         authProvider.hasRole(UserRole.admin.name)) {
       initialLocation = dashboard;
@@ -217,6 +225,10 @@ class AppRouter {
             final movementId = state.pathParameters['id']!;
             return AdminInventoryMovementsDetailScreen(movementId: movementId);
           },
+        ),
+        GoRoute(
+          path: onboarding,
+          builder: (context, state) => const OnboardingScreen(),
         ),
         GoRoute(
           path: adminViewProduct,

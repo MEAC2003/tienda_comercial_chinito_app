@@ -353,8 +353,6 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  // In ProductProvider class, update confirmOrder method:
-
   Future<bool> confirmOrder(String productId, String userId) async {
     final product = getProductById(productId);
     if (product == null) {
