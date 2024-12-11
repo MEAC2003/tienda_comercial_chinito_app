@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="tienda_comercial_chinito_app"
+        android:label="Comercial Chinito"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
