@@ -11,13 +11,13 @@ String typeGarmentToJson(List<TypeGarment> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class TypeGarment {
-  String id;
-  String createdAt;
+  String? id;
+  String? createdAt;
   String name;
 
   TypeGarment({
-    required this.id,
-    required this.createdAt,
+    this.id,
+    this.createdAt,
     required this.name,
   });
 
@@ -39,8 +39,6 @@ class TypeGarment {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "created_at": createdAt,
         "name": name,
       };
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:tienda_comercial_chinito_app/features/admin/actions/presentation/providers/action_provider.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/shared.dart';
 
@@ -37,7 +39,8 @@ class _AddTypeGarmentView extends StatefulWidget {
 }
 
 class _AddTypeGarmentViewState extends State<_AddTypeGarmentView> {
-  final TextEditingController _typeController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _typeController = TextEditingController();
 
   @override
   void dispose() {
@@ -45,35 +48,56 @@ class _AddTypeGarmentViewState extends State<_AddTypeGarmentView> {
     super.dispose();
   }
 
+  Future<void> _saveTypeGarment() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    try {
+      final success = await context.read<ActionProvider>().createTypeGarment(
+            name: _typeController.text,
+          );
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Tipo de prenda creado exitosamente')),
+        );
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al crear el tipo de prenda: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(AppSize.defaultPadding * 1.5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomTextFields(
-              label: 'Nombre del Tipo de Prenda',
-              controller: _typeController,
-              keyboardType: TextInputType.text,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Por favor ingrese un tipo de prenda';
-                }
-                return null;
-              },
-            ),
-            SizedBox(height: AppSize.defaultPadding * 2),
-            CustomActionButton(
-              text: 'Guardar Tipo de Prenda',
-              onPressed: () {
-                // TODO: Implement save logic
-                print('Guardar tipo de prenda');
-              },
-              color: AppColors.primarySkyBlue,
-            ),
-          ],
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(AppSize.defaultPadding * 1.5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomTextFields(
+                label: 'Nombre del Tipo de Prenda',
+                controller: _typeController,
+                keyboardType: TextInputType.text,
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
+                    return 'Por favor ingrese un tipo de prenda';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: AppSize.defaultPadding * 2),
+              CustomActionButton(
+                text: 'Guardar Tipo de Prenda',
+                onPressed: _saveTypeGarment,
+                color: AppColors.primarySkyBlue,
+              ),
+            ],
+          ),
         ),
       ),
     );

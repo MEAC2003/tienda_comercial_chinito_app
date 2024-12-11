@@ -87,9 +87,6 @@ class _AddSchoolViewState extends State<_AddSchoolView> {
   Widget build(BuildContext context) {
     final provider = context.watch<ActionProvider>();
 
-    if (provider.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
     return Form(
       key: _formKey,
       child: SingleChildScrollView(

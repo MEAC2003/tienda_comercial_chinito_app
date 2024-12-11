@@ -11,13 +11,13 @@ String zonesToJson(List<Zones> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Zones {
-  String id;
-  String createdAt;
+  String? id;
+  String? createdAt;
   String name;
 
   Zones({
-    required this.id,
-    required this.createdAt,
+    this.id,
+    this.createdAt,
     required this.name,
   });
 
@@ -39,8 +39,6 @@ class Zones {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "created_at": createdAt,
         "name": name,
       };
 }

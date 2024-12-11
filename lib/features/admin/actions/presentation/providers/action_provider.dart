@@ -160,4 +160,30 @@ class ActionProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> createTypeGarment({required String name}) async {
+    try {
+      final typeGarment = TypeGarment(
+        name: name,
+      );
+      await _actionRepository.createTypeGarment(typeGarment);
+      return true;
+    } catch (e) {
+      print('Error creating type garment: $e');
+      return false;
+    }
+  }
+
+  Future<bool> createZone({required String name}) async {
+    try {
+      final zone = Zones(
+        name: name,
+      );
+      await _actionRepository.createZone(zone);
+      return true;
+    } catch (e) {
+      print('Error creating zone: $e');
+      return false;
+    }
+  }
 }
