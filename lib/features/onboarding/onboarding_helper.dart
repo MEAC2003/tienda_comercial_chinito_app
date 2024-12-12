@@ -5,7 +5,6 @@ class OnboardingHelper {
 
   static Future<bool> isOnboardingComplete() async {
     final prefs = await SharedPreferences.getInstance();
-    // Asegúrate de que devuelva false por defecto
     return prefs.getBool(_onboardingKey) ?? false;
   }
 

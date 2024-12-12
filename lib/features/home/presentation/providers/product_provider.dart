@@ -7,9 +7,11 @@ import 'package:tienda_comercial_chinito_app/features/home/data/models/sex.dart'
 import 'package:tienda_comercial_chinito_app/features/home/data/models/sizes.dart';
 import 'package:tienda_comercial_chinito_app/features/home/data/models/type_garment.dart';
 import 'package:tienda_comercial_chinito_app/features/home/domain/repositories/product_repository.dart';
+import 'package:tienda_comercial_chinito_app/services/notification_service.dart';
 
 class ProductProvider extends ChangeNotifier {
   final ProductRepository _productRepository;
+
   List<Products> _products = [];
   List<Categories> _categories = [];
   List<TypeGarment> _typeGarment = [];
@@ -25,7 +27,7 @@ class ProductProvider extends ChangeNotifier {
   int get resetKey => _resetKey;
   Map<String, int> _productQuantities = {};
   ProductProvider(this._productRepository) {
-    loadProduct(); // Cargar los coches al inicializar el provider
+    loadProduct();
   }
   List<Products> get availableProducts =>
       _products.where((product) => product.isAvailable).toList();
@@ -90,6 +92,8 @@ class ProductProvider extends ChangeNotifier {
       _sex = await _productRepository.getSex();
       _sizes = await _productRepository.getSize();
       sizesOptions;
+      mostSoldProducts;
+      await checkStockLevels();
     } catch (e) {
       print('Error al cargar productos: $e');
     } finally {
@@ -199,6 +203,22 @@ class ProductProvider extends ChangeNotifier {
       print('Error loading most sold products: $e');
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> checkStockLevels() async {
+    for (final product in _products) {
+      if (product.currentStock == 0) {
+        await NotificationService.showNotification(
+          'Stock Agotado',
+          'El producto ${product.name} se ha agotado completamente',
+        );
+      } else if (product.currentStock <= product.minimumStock) {
+        await NotificationService.showNotification(
+          'Stock Bajo',
+          'El producto ${product.name} está por agotarse (${product.currentStock} unidades)',
+        );
+      }
     }
   }
 
@@ -316,7 +336,6 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-// Agrega métodos similares para otros filtros:
   void filterBySex(String sexName) {
     if (sexName == 'Todo') {
       resetFilter();
@@ -342,7 +361,6 @@ class ProductProvider extends ChangeNotifier {
     }
     _isFiltering = true;
 
-    // Asegúrate de que las tallas estén ordenadas
     _sizes.sort((a, b) {
       final isANumber = int.tryParse(a.name) != null;
       final isBNumber = int.tryParse(b.name) != null;
@@ -393,7 +411,6 @@ class ProductProvider extends ChangeNotifier {
             _products.where((product) => product.currentStock <= 0).toList();
         break;
       default:
-        // Si no se especifica una opción válida, muestra todos los productos
         _filteredProducts = _products;
     }
 
@@ -452,7 +469,7 @@ class ProductProvider extends ChangeNotifier {
 
       // Reset quantity after successful order
       _productQuantities[productId] = 1;
-
+      await checkStockLevels();
       notifyListeners();
       return true;
     } catch (e) {
@@ -465,6 +482,27 @@ class ProductProvider extends ChangeNotifier {
     _productQuantities.remove(productId);
     notifyListeners();
   }
+
+  // Future<void> checkStockLevels() async {
+  //   final products = await _productRepository.getProduct();
+
+  //   for (final product in products) {
+  //     if (product.currentStock == 0) {
+  //       await NotificationService.showNotification(
+  //         id: product.id,
+  //         title: 'Stock Agotado',
+  //         body: 'El producto ${product.name} se ha agotado',
+  //       );
+  //     } else if (product.currentStock <= product.minimumStock) {
+  //       await NotificationService.showNotification(
+  //         id: product.id,
+  //         title: 'Stock Mínimo',
+  //         body:
+  //             'El producto ${product.name} está en nivel mínimo (${product.currentStock} unidades)',
+  //       );
+  //     }
+  //   }
+  // }
 
 // Método para aplicar filtros múltiples
   void applyComplexFilter({

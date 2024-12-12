@@ -313,8 +313,6 @@ class _AdminProductUpdateState extends State<AdminProductUpdate> {
                   validator: (value) =>
                       value == null ? 'Seleccione el sexo' : null,
                 ),
-
-// Size Dropdown
                 SizedBox(height: AppSize.defaultPadding * 2),
                 Text(
                   'Talla',

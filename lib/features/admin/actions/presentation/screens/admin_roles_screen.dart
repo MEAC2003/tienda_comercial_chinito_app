@@ -169,7 +169,6 @@ class _AdminRolesScreenState extends State<AdminRolesScreen> {
                             : null,
                       ),
                       title: Text(
-                        //Mayuscula y minuscula para todos los nomnbres y solo mostrar los dos primeros nombres
                         user.fullName
                             .split(' ')
                             .map((name) =>

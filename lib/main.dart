@@ -22,19 +22,23 @@ import 'package:tienda_comercial_chinito_app/features/home/domain/repositories/p
 import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/datasources/supabase_users_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/domain/repositories/users_repository_impl.dart';
+import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/notifications_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/navigation_provider.dart';
+import 'package:tienda_comercial_chinito_app/services/notification_service.dart';
 import 'package:tienda_comercial_chinito_app/utils/utils.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
+  tz.initializeTimeZones();
   await dotenv.load(fileName: '.env');
   await Supabase.initialize(
     url: dotenv.get('SUPABASE_URL'),
     anonKey: dotenv.get('SUPABASE_ANON_KEY'),
   );
   await ScreenUtil.ensureScreenSize();
-
   final authDataSource = SupabaseAuthDataSourceImpl();
   final authRepository = AuthRepositoryImpl(authDataSource);
   final authProvider = AuthProvider(authRepository);
@@ -44,6 +48,7 @@ void main() async {
   final adminUsersRepository = AdminUsersRepositoryImpl(
     AdminSupabaseUsersDataSource(Supabase.instance.client),
   );
+
   final actionRepository = ActionRepositoryImpl(
     SupabaseActionDataSourceImpl(),
   );

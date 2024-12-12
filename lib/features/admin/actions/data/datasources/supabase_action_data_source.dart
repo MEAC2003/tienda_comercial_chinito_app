@@ -101,7 +101,7 @@ class SupabaseActionDataSourceImpl implements ActionDataSource {
       await _supabase
           .from('products')
           .update(product.toJson())
-          .eq('id', product.id.toString()); // Ensure string comparison
+          .eq('id', product.id.toString());
 
       print('Datasource: Product update completed for ID: ${product.id}');
     } catch (e) {

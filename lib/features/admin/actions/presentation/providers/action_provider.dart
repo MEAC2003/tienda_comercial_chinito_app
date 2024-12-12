@@ -73,7 +73,7 @@ class ActionProvider extends ChangeNotifier {
       _searchQuery.isEmpty && !_isFiltering ? _movements : _filteredMovements;
   bool get hasError => _error != null;
   String? get error => _error;
-  // Load all necessary data
+
   Future<void> loadInitialData() async {
     _isLoading = true;
     notifyListeners();
@@ -559,7 +559,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> deleteSupplier(String supplierId) async {
     try {
       _isLoading = true;
@@ -567,7 +566,6 @@ class ActionProvider extends ChangeNotifier {
 
       await _actionRepository.deleteSupplier(supplierId);
 
-      // Remove from local state
       _suppliers.removeWhere((supplier) => supplier.id == supplierId);
       _filteredSuppliers = _suppliers; // Update filtered list too
 
@@ -582,7 +580,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> updateSupplier({
     required String id,
     required String dni,
@@ -624,7 +621,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> deleteCategory(String categoryId) async {
     try {
       _isLoading = true;
@@ -648,7 +644,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> updateCategory({
     required String id,
     required String name,
@@ -725,7 +720,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> updateZone({
     required String id,
     required String name,
@@ -759,7 +753,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> deleteSize(String sizeId) async {
     try {
       _isLoading = true;
@@ -782,7 +775,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> updateSize({
     required String id,
     required String name,
@@ -838,7 +830,6 @@ class ActionProvider extends ChangeNotifier {
     }
   }
 
-  // In ActionProvider class
   Future<bool> updateSchool({
     required String id,
     required String name,

@@ -59,6 +59,7 @@ class AppRouter {
   static const String adminSchoolUpdate = '/admin-school-update';
   static const String adminDetailSize = '/admin-detail-size';
   static const String adminSizeUpdate = '/admin-size-update';
+  static const String pruebas = '/pruebas';
 
   static Future<GoRouter> getRouter(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -67,7 +68,6 @@ class AppRouter {
 
     String initialLocation = home;
 
-    // Agrega más prints
     if (!isOnboardingComplete) {
       initialLocation = onboarding;
     } else {

@@ -9,7 +9,7 @@ class AdminUserProvider extends ChangeNotifier {
   PublicUser? _user;
   bool _isLoading = false;
   String? _error;
-  List<PublicUser> _users = []; // Nueva lista de usuarios
+  List<PublicUser> _users = [];
 
   AdminUserProvider(this._repository, {required AuthProvider authProvider})
       : _authProvider = authProvider {
@@ -21,9 +21,8 @@ class AdminUserProvider extends ChangeNotifier {
   PublicUser? get user => _user;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  List<PublicUser> get users => _users; // Getter para la lista de usuarios
+  List<PublicUser> get users => _users;
 
-  // Nuevo método para cargar todos los usuarios
   Future<void> fetchUsers() async {
     _isLoading = true;
     _error = null;

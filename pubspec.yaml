@@ -48,6 +48,8 @@ dependencies:
   cloudinary_public: ^0.23.1
   image_picker: ^1.1.2
   shared_preferences: ^2.2.0
+  flutter_local_notifications: ^18.0.1  # Updated version
+  timezone: ^0.9.4  # Downgraded to compatible version
 
 dev_dependencies:
   flutter_test:

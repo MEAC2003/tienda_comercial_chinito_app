@@ -257,7 +257,6 @@ class _ProductDetailsView extends StatelessWidget {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        //elegir cuantos productos se quieren - 1 +
                         Row(
                           children: [
                             GestureDetector(
