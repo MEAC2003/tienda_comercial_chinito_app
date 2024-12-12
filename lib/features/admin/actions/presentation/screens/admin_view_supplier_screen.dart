@@ -147,7 +147,7 @@ class _AdminViewSupplierScreenState extends State<AdminViewSupplierScreen> {
                                         color: AppColors.darkColor,
                                         fontWeight: FontWeight.w600,
                                       ),
-                                      maxLines: 2,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     SizedBox(

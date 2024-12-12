@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda_comercial_chinito_app/features/home/data/models/categories.dart';
 import 'package:tienda_comercial_chinito_app/features/home/data/models/inventory_movements.dart';
 import 'package:tienda_comercial_chinito_app/features/home/data/models/products.dart';
@@ -29,6 +30,11 @@ class ProductProvider extends ChangeNotifier {
   ProductProvider(this._productRepository) {
     loadProduct();
   }
+  Future<bool> _areNotificationsEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('stock_notifications_enabled') ?? false;
+  }
+
   List<Products> get availableProducts =>
       _products.where((product) => product.isAvailable).toList();
   List<Products> get products => _products;
@@ -93,6 +99,7 @@ class ProductProvider extends ChangeNotifier {
       _sizes = await _productRepository.getSize();
       sizesOptions;
       mostSoldProducts;
+      loadMostSoldProducts();
       await checkStockLevels();
     } catch (e) {
       print('Error al cargar productos: $e');
@@ -110,7 +117,7 @@ class ProductProvider extends ChangeNotifier {
       // Get fresh data
       final products = await _productRepository.getProduct();
       _products = products;
-
+      await checkStockLevels();
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -207,17 +214,19 @@ class ProductProvider extends ChangeNotifier {
   }
 
   Future<void> checkStockLevels() async {
+    // First check if notifications are enabled
+    if (!await _areNotificationsEnabled()) return;
+
     for (final product in _products) {
+      // For zero stock
       if (product.currentStock == 0) {
-        await NotificationService.showNotification(
-          'Stock Agotado',
-          'El producto ${product.name} se ha agotado completamente',
-        );
-      } else if (product.currentStock <= product.minimumStock) {
-        await NotificationService.showNotification(
-          'Stock Bajo',
-          'El producto ${product.name} está por agotarse (${product.currentStock} unidades)',
-        );
+        await NotificationService.checkStockAndNotify(
+            product.currentStock, product.id, product.name, 0);
+      }
+      // For low stock
+      else if (product.currentStock <= product.minimumStock) {
+        await NotificationService.checkStockAndNotify(product.currentStock,
+            product.id, product.name, product.minimumStock);
       }
     }
   }

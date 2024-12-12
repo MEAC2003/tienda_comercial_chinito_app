@@ -178,20 +178,11 @@ class _AdminMyAccountViewState extends State<_AdminMyAccountView> {
               ),
               SizedBox(height: AppSize.defaultPadding),
               CustomListTile(
-                leadingIcon: const Icon(Icons.bar_chart),
-                title: 'Gráficos',
-                trailingIcon: const Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  context.push(AppRouter.editProfile);
-                },
-              ),
-              SizedBox(height: AppSize.defaultPadding),
-              CustomListTile(
                 leadingIcon: const Icon(Icons.my_library_books_rounded),
                 title: 'Reportes',
                 trailingIcon: const Icon(Icons.arrow_forward_ios),
                 onTap: () {
-                  context.push(AppRouter.editProfile);
+                  context.push(AppRouter.reports);
                 },
               ),
             ],

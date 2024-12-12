@@ -179,7 +179,7 @@ class _AdminProductUpdateState extends State<AdminProductUpdate> {
                   validator: (value) {
                     if (value?.isEmpty ?? true)
                       return 'Por favor ingrese el precio';
-                    if (int.tryParse(value!) == null)
+                    if (double.tryParse(value!) == null)
                       return 'Ingrese un número válido';
                     return null;
                   },

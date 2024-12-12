@@ -28,6 +28,16 @@ class _ConfigView extends StatefulWidget {
 
 class _ConfigViewState extends State<_ConfigView> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final productProvider =
+          Provider.of<ProductProvider>(context, listen: false);
+      productProvider.loadMostSoldProducts();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
     final PublicUser? user = userProvider.user;

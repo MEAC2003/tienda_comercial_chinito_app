@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/categories.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/inventory_movements.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/products.dart';
@@ -10,6 +11,7 @@ import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/
 import 'package:tienda_comercial_chinito_app/features/admin/actions/data/models/zones.dart';
 import 'package:tienda_comercial_chinito_app/features/admin/actions/domain/repositories/action_repository.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/models/public_user.dart';
+import 'package:tienda_comercial_chinito_app/services/notification_service.dart';
 
 class ActionProvider extends ChangeNotifier {
   final ActionRepository _actionRepository;
@@ -94,6 +96,7 @@ class ActionProvider extends ChangeNotifier {
       _filteredSizes = _sizes;
       _filteredSchools = _schools;
       _filteredTypeGarments = _typeGarments;
+      await checkStockLevels();
     } catch (e) {
       print('Error loading initial data: $e');
     }
@@ -192,6 +195,29 @@ class ActionProvider extends ChangeNotifier {
       }).toList();
     }
     notifyListeners();
+  }
+
+  Future<bool> _areNotificationsEnabled() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('stock_notifications_enabled') ?? false;
+  }
+
+  Future<void> checkStockLevels() async {
+    // First check if notifications are enabled
+    if (!await _areNotificationsEnabled()) return;
+
+    for (final product in _products) {
+      // For zero stock
+      if (product.currentStock == 0) {
+        await NotificationService.checkStockAndNotify(
+            product.currentStock, product.id ?? '', product.name, 0);
+      }
+      // For low stock
+      else if (product.currentStock <= product.minimumStock) {
+        await NotificationService.checkStockAndNotify(product.currentStock,
+            product.id ?? '', product.name, product.minimumStock);
+      }
+    }
   }
 
   Future<bool> createProduct({

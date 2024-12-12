@@ -4,13 +4,13 @@ import 'package:tienda_comercial_chinito_app/utils/utils.dart';
 class QuickStatsRow extends StatelessWidget {
   final int products;
   final int lowStock;
-  final int mediumStock;
+  final int highStocK;
 
   const QuickStatsRow({
     super.key,
     required this.products,
     required this.lowStock,
-    required this.mediumStock,
+    required this.highStocK,
   });
 
   @override
@@ -34,8 +34,8 @@ class QuickStatsRow extends StatelessWidget {
         ),
         Expanded(
           child: _StatCard(
-            title: 'P. Stock Medio',
-            value: mediumStock.toString(),
+            title: 'P. Sin Stock',
+            value: highStocK.toString(),
             icon: Icons.import_export,
           ),
         ),

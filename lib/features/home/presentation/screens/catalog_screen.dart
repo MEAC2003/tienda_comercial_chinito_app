@@ -271,207 +271,210 @@ class _CatalogViewState extends State<_CatalogView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            // AppBar
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppSize.defaultPadding,
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: AppSize.defaultPadding * 1.5,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color.fromARGB(255, 240, 243, 243), // 70%
-                          Color.fromARGB(255, 243, 241, 241), // 25%
-                          Color.fromARGB(255, 231, 231, 231), // 15%
-                        ],
-                        stops: [
-                          0.03, // 3%
-                          0.12, // 12%
-                          1.0, // 100%
-                        ],
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(AppSize.defaultRadius),
+    return RefreshIndicator(
+      onRefresh: () => context.read<ProductProvider>().refreshProducts(),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // AppBar
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppSize.defaultPadding,
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: AppSize.defaultPadding * 1.5,
                     ),
-                    child: TextField(
-                      onChanged: (value) {
-                        context.read<ProductProvider>().searchProducts(value);
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Buscar productos...',
-                        hintStyle: AppStyles.h4(
-                          color: AppColors.darkColor50,
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color.fromARGB(255, 240, 243, 243), // 70%
+                            Color.fromARGB(255, 243, 241, 241), // 25%
+                            Color.fromARGB(255, 231, 231, 231), // 15%
+                          ],
+                          stops: [
+                            0.03, // 3%
+                            0.12, // 12%
+                            1.0, // 100%
+                          ],
                         ),
-                        prefixIcon: const Icon(Icons.search),
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: AppSize.defaultPadding * 0.25,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppSize.defaultRadius),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppSize.defaultRadius),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AppSize.defaultRadius),
-                          borderSide: BorderSide.none,
+                        borderRadius:
+                            BorderRadius.circular(AppSize.defaultRadius),
+                      ),
+                      child: TextField(
+                        onChanged: (value) {
+                          context.read<ProductProvider>().searchProducts(value);
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Buscar productos...',
+                          hintStyle: AppStyles.h4(
+                            color: AppColors.darkColor50,
+                          ),
+                          prefixIcon: const Icon(Icons.search),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: AppSize.defaultPadding * 0.25,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppSize.defaultRadius),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppSize.defaultRadius),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppSize.defaultRadius),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: AppSize.defaultPadding * 2,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Catálogo',
-                        style: AppStyles.h2(
-                          color: AppColors.darkColor,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.more_vert),
-                        onPressed: () => _showFilterModal(context),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: AppSize.defaultPadding,
-                  ),
-                  if (_selectedFilter != FilterType.none)
+                    SizedBox(
+                      height: AppSize.defaultPadding * 2,
+                    ),
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: _buildFilterOptions(),
+                        Text(
+                          'Catálogo',
+                          style: AppStyles.h2(
+                            color: AppColors.darkColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.more_vert),
+                          onPressed: () => _showFilterModal(context),
                         ),
                       ],
                     ),
-                  SizedBox(
-                    height: AppSize.defaultPadding * 1.5,
-                  ),
-                  SizedBox(
-                    child:
-                        SingleChildScrollView(child: Consumer<ProductProvider>(
-                      builder: (context, productProvider, child) {
-                        if (productProvider.isLoading) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-
-                        final products = productProvider.filteredProducts;
-
-                        if (products.isEmpty) {
-                          if (productProvider.isSearching) {
-                            return SizedBox(
-                              width: double.infinity,
-                              height: 100.h,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'No se encontraron productos que coincidan con tu búsqueda',
-                                    textAlign: TextAlign.center,
-                                    style: AppStyles.h4(
-                                      color: AppColors.darkColor,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          } else if (productProvider.isFiltering) {
-                            return SizedBox(
-                              width: double.infinity,
-                              height: 100.h,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'No hay productos disponibles en esta categoría',
-                                    textAlign: TextAlign.center,
-                                    style: AppStyles.h4(
-                                      color: AppColors.darkColor,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
+                    SizedBox(
+                      height: AppSize.defaultPadding,
+                    ),
+                    if (_selectedFilter != FilterType.none)
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildFilterOptions(),
+                          ),
+                        ],
+                      ),
+                    SizedBox(
+                      height: AppSize.defaultPadding * 1.5,
+                    ),
+                    SizedBox(
+                      child: SingleChildScrollView(
+                          child: Consumer<ProductProvider>(
+                        builder: (context, productProvider, child) {
+                          if (productProvider.isLoading) {
+                            return const Center(
+                                child: CircularProgressIndicator());
                           }
-                        }
 
-                        return Column(
-                          children: [
-                            GridView.builder(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                crossAxisSpacing: 30,
-                                mainAxisSpacing: 7,
-                                mainAxisExtent: 320,
-                              ),
-                              itemCount: products.length,
-                              itemBuilder: (context, index) {
-                                final producto = products[index];
-                                return ProductCard(
-                                  imageUrl: producto.imageUrl.isNotEmpty
-                                      ? producto.imageUrl[0]
-                                      : AppAssets.uniforme,
-                                  price: producto.salePrice.toString(),
-                                  title: producto.name
-                                      .split(' ')
-                                      .map((word) =>
-                                          word[0].toUpperCase() +
-                                          word.substring(1).toLowerCase())
-                                      .join(' '),
-                                  circleColor: producto.currentStock >
-                                          producto.minimumStock
-                                      ? Colors.green
-                                      : producto.currentStock <=
-                                                  producto.minimumStock &&
-                                              producto.currentStock >= 1
-                                          ? Colors.orange
-                                          : Colors.red,
-                                  onSelect: () {
-                                    context.push(
-                                        '${AppRouter.productDetails}/${producto.id}');
-                                  },
-                                );
-                              },
-                            )
-                          ],
-                        );
-                      },
-                    )),
-                  ),
-                  SizedBox(
-                    height: AppSize.defaultPadding * 4,
-                  ),
-                ],
-              ),
-            )
-          ],
+                          final products = productProvider.filteredProducts;
+
+                          if (products.isEmpty) {
+                            if (productProvider.isSearching) {
+                              return SizedBox(
+                                width: double.infinity,
+                                height: 100.h,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'No se encontraron productos que coincidan con tu búsqueda',
+                                      textAlign: TextAlign.center,
+                                      style: AppStyles.h4(
+                                        color: AppColors.darkColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else if (productProvider.isFiltering) {
+                              return SizedBox(
+                                width: double.infinity,
+                                height: 100.h,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'No hay productos disponibles en esta categoría',
+                                      textAlign: TextAlign.center,
+                                      style: AppStyles.h4(
+                                        color: AppColors.darkColor,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+
+                          return Column(
+                            children: [
+                              GridView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 30,
+                                  mainAxisSpacing: 7,
+                                  mainAxisExtent: 320,
+                                ),
+                                itemCount: products.length,
+                                itemBuilder: (context, index) {
+                                  final producto = products[index];
+                                  return ProductCard(
+                                    imageUrl: producto.imageUrl.isNotEmpty
+                                        ? producto.imageUrl[0]
+                                        : AppAssets.uniforme,
+                                    price: producto.salePrice.toString(),
+                                    title: producto.name
+                                        .split(' ')
+                                        .map((word) =>
+                                            word[0].toUpperCase() +
+                                            word.substring(1).toLowerCase())
+                                        .join(' '),
+                                    circleColor: producto.currentStock >
+                                            producto.minimumStock
+                                        ? Colors.green
+                                        : producto.currentStock <=
+                                                    producto.minimumStock &&
+                                                producto.currentStock >= 1
+                                            ? Colors.orange
+                                            : Colors.red,
+                                    onSelect: () {
+                                      context.push(
+                                          '${AppRouter.productDetails}/${producto.id}');
+                                    },
+                                  );
+                                },
+                              )
+                            ],
+                          );
+                        },
+                      )),
+                    ),
+                    SizedBox(
+                      height: AppSize.defaultPadding * 4,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

@@ -110,9 +110,9 @@ class _DashboardViewState extends State<_DashboardView> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () => (),
+                    onPressed: () => (context.push(AppRouter.settings)),
                     icon: const Icon(
-                      Icons.notifications_none,
+                      Icons.settings,
                     ),
                   ),
                 ],
@@ -159,7 +159,7 @@ class _DashboardViewState extends State<_DashboardView> {
                   : QuickStatsRow(
                       products: dashboardProvider.totalProducts,
                       lowStock: dashboardProvider.lowStockProducts,
-                      mediumStock: dashboardProvider.mediumStockProducts,
+                      highStocK: dashboardProvider.highStockProducts,
                     ),
               SizedBox(height: AppSize.defaultPadding * 2),
               Row(

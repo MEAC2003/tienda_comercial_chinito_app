@@ -151,13 +151,15 @@ class _AdminViewSchoolScreenState extends State<AdminViewSchoolScreen> {
                                         color: AppColors.darkColor,
                                         fontWeight: FontWeight.w600,
                                       ),
-                                      maxLines: 2,
+                                      maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     SizedBox(
                                         height: AppSize.defaultPadding * 0.5),
                                     Text(
                                       'Descripción: ${school.level}',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
                                       style: AppStyles.h5(
                                         color: AppColors.darkColor50,
                                       ),

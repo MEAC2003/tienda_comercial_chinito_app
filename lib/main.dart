@@ -22,7 +22,6 @@ import 'package:tienda_comercial_chinito_app/features/home/domain/repositories/p
 import 'package:tienda_comercial_chinito_app/features/home/presentation/providers/product_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/data/datasources/supabase_users_data_source.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/domain/repositories/users_repository_impl.dart';
-import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/notifications_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/settings/presentation/providers/users_provider.dart';
 import 'package:tienda_comercial_chinito_app/features/shared/navigation_provider.dart';
 import 'package:tienda_comercial_chinito_app/services/notification_service.dart';

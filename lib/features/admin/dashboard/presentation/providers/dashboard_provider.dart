@@ -15,7 +15,8 @@ class DashboardProvider extends ChangeNotifier {
 
   int totalProducts = 0;
   int lowStockProducts = 0;
-  int mediumStockProducts = 0;
+  //SIN STOCK
+  int highStockProducts = 0;
 
   Future<void> loadInventoryMovements() async {
     try {
@@ -95,12 +96,8 @@ class DashboardProvider extends ChangeNotifier {
           .where((p) => p.isAvailable && p.currentStock <= p.minimumStock)
           .length;
 
-      mediumStockProducts = products
-          .where((p) =>
-              p.isAvailable &&
-              p.currentStock > p.minimumStock &&
-              p.currentStock <= (p.minimumStock * 2))
-          .length;
+      highStockProducts =
+          products.where((p) => p.isAvailable && p.currentStock == 0).length;
 
       isLoading = false;
       notifyListeners();

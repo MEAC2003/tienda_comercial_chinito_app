@@ -50,6 +50,8 @@ dependencies:
   shared_preferences: ^2.2.0
   flutter_local_notifications: ^18.0.1  # Updated version
   timezone: ^0.9.4  # Downgraded to compatible version
+  intl: ^0.20.1
+  excel: ^4.0.6
 
 dev_dependencies:
   flutter_test:
